@@ -169,12 +169,6 @@ public class InmetData {
 	public static void main(String[] args) {
 
 		// creating the instance of the system
-		InmetData system = null;
-		try {
-			InmetStationDAO.getInstanceOf();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+		System.out.println("Testando git");
 	}
 }
