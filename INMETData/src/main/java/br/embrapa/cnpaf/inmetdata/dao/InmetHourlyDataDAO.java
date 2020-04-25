@@ -258,6 +258,7 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 						+ " ON " + TABLE_INMET_HOURLY_DATA + " (id, measurement_date); "//
 		);
 
+
 		// initializing table
 		super.init(queries);
 		return this;
