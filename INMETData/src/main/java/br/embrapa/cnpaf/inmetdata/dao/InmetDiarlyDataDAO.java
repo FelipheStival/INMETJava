@@ -213,7 +213,6 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 				"AND" + //
 				"measurement_date =" + date; //
 		
-		System.out.println(query);
 
 		try {
 			// execute sql query

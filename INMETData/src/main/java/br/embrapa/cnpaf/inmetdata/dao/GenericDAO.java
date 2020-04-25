@@ -48,6 +48,8 @@ import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
 public abstract class GenericDAO<D, E> {
 
 	public static final String TABLE_INMET_STATION = "station";
+	public static final String TABLE_INMET_CITY = "city";
+	public static final String TABLE_INMET_STATE = "state";
 	public static final String TABLE_INMET_HOURLY_DATA = "inmet_hourly_data";
 	public static final String INDEX_INMET_HOURLY_DATA_STATION_AND_MEASUREMENT_DATE = "idx_INMET_HOURLY_DATA_MEASUREMENT_DATE_AND_STATION_CODE";
 	public static final String TABLE_INMET_DAILY_DATA = "inmet_daily_data";

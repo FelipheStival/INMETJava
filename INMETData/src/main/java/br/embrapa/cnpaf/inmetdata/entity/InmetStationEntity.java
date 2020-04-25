@@ -32,14 +32,11 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 
 	private Long id;
 	private String code;
-	private double latitude;
-	private double longitude;
-	private String city;
-	private String state;
+	private CityEntily cityEntily;
+	private StateEntily stateEntily;
 	private LocalDate startDate;
 
 	/**
-	 * Public constructor without parameters.
 	 * 
 	 */
 	public InmetStationEntity() {
@@ -49,21 +46,17 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	/**
 	 * @param id
 	 * @param code
-	 * @param latitude
-	 * @param longitude
-	 * @param city
-	 * @param state
+	 * @param cityEntily
+	 * @param stateEntily
 	 * @param startDate
 	 */
-	public InmetStationEntity(Long id, String code, double latitude, double longitude, String city, String state,
-			LocalDate startDate) {
+	public InmetStationEntity(Long id, String code, br.embrapa.cnpaf.inmetdata.entity.CityEntily cityEntily,
+			br.embrapa.cnpaf.inmetdata.entity.StateEntily stateEntily, LocalDate startDate) {
 		super();
 		this.id = id;
 		this.code = code;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.city = city;
-		this.state = state;
+		this.cityEntily = cityEntily;
+		this.stateEntily = stateEntily;
 		this.startDate = startDate;
 	}
 
@@ -96,59 +89,31 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	}
 
 	/**
-	 * @return the latitude
+	 * @return the cityEntily
 	 */
-	public double getLatitude() {
-		return latitude;
+	public CityEntily getCityEntily() {
+		return cityEntily;
 	}
 
 	/**
-	 * @param latitude the latitude to set
+	 * @param cityEntily the cityEntily to set
 	 */
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
+	public void setCityEntily(CityEntily cityEntily) {
+		this.cityEntily = cityEntily;
 	}
 
 	/**
-	 * @return the longitude
+	 * @return the stateEntily
 	 */
-	public double getLongitude() {
-		return longitude;
+	public StateEntily getStateEntily() {
+		return stateEntily;
 	}
 
 	/**
-	 * @param longitude the longitude to set
+	 * @param stateEntily the stateEntily to set
 	 */
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	/**
-	 * @return the city
-	 */
-	public String getCity() {
-		return city;
-	}
-
-	/**
-	 * @param city the city to set
-	 */
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(String state) {
-		this.state = state;
+	public void setStateEntily(StateEntily stateEntily) {
+		this.stateEntily = stateEntily;
 	}
 
 	/**
@@ -164,21 +129,22 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((city == null) ? 0 : city.hashCode());
+		result = prime * result + ((cityEntily == null) ? 0 : cityEntily.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(latitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(longitude);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((stateEntily == null) ? 0 : stateEntily.hashCode());
 		return result;
 	}
 
@@ -191,10 +157,10 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 		if (getClass() != obj.getClass())
 			return false;
 		InmetStationEntity other = (InmetStationEntity) obj;
-		if (city == null) {
-			if (other.city != null)
+		if (cityEntily == null) {
+			if (other.cityEntily != null)
 				return false;
-		} else if (!city.equals(other.city))
+		} else if (!cityEntily.equals(other.cityEntily))
 			return false;
 		if (code == null) {
 			if (other.code != null)
@@ -206,44 +172,17 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude))
-			return false;
-		if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude))
-			return false;
 		if (startDate == null) {
 			if (other.startDate != null)
 				return false;
 		} else if (!startDate.equals(other.startDate))
 			return false;
-		if (state == null) {
-			if (other.state != null)
+		if (stateEntily == null) {
+			if (other.stateEntily != null)
 				return false;
-		} else if (!state.equals(other.state))
+		} else if (!stateEntily.equals(other.stateEntily))
 			return false;
 		return true;
-	}
-
-	/**
-	 * Convert the object in a json string.
-	 * 
-	 * @return Json string of the object.
-	 */
-	public String toString() {
-		try {
-			return JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
-		} catch (Throwable e) {
-		}
-		return null;
-	}
-
-	@Override
-	public int compareTo(InmetStationEntity o) {
-		// TODO Auto-generated method stub
-		String ownEntity = StringUtil
-				.removeAccent(this.getCode() + ";" + TimeUtil.formatterLocalDateToYYYYMMDD(this.getStartDate()));
-		String otherEntity = StringUtil
-				.removeAccent(o.getCode() + ";" + TimeUtil.formatterLocalDateToYYYYMMDD(o.getStartDate()));
-		return ownEntity.compareTo(otherEntity);
 	}
 
 	/**
@@ -265,6 +204,12 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 					MessageEnum.INMET_HOURLY_DATA_ENTITY_ERROR_JSON_PARSING,
 					InmetDiarlyDataEntity.class.getSimpleName(), "valueOf", e.getMessage(), null, json);
 		}
+	}
+
+	@Override
+	public int compareTo(InmetStationEntity o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

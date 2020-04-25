@@ -9,12 +9,15 @@ import javax.swing.plaf.SliderUI;
 
 import org.w3c.dom.ls.LSInput;
 
+import br.embrapa.cnpaf.inmetdata.dao.CityDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
+import br.embrapa.cnpaf.inmetdata.dao.StateDataDAO;
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
+import br.embrapa.cnpaf.inmetdata.entity.StateEntily;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.GenericException;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
@@ -169,8 +172,9 @@ public class InmetData {
 	public static void main(String[] args) {
 
 		// creating the instance of the system
-		try {
-			InmetStationDAO stationDAO = InmetStationDAO.getInstanceOf();
+		try {;
+			StateDataDAO.getInstanceOf();
+			CityDataDAO.getInstanceOf();
 			
 		}
 		catch(PersistenceException e) {

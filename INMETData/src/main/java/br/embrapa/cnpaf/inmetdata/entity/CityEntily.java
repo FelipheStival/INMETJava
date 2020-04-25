@@ -1,14 +1,55 @@
 package br.embrapa.cnpaf.inmetdata.entity;
 
-import java.io.Serializable;
+import java.io.Serializable
+import java.time.LocalDate;
 
-public class cityEntily implements Serializable, Comparable<cityEntily> {
+public class CityEntily implements Serializable, Comparable<CityEntily> {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private double latitude;
 	private double longitude;
 	private String name;
+	private StateEntily stateEntily;
+	private LocalDate starDate;
+
+	/**
+	 * 
+	 */
+	public CityEntily() {
+		super();
+	}
+
+	/**
+	 * @param id
+	 * @param latitude
+	 * @param longitude
+	 * @param name
+	 * @param stateEntily
+	 */
+	public CityEntily(Long id, double latitude, double longitude, String name,
+			br.embrapa.cnpaf.inmetdata.entity.StateEntily stateEntily) {
+		super();
+		this.id = id;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.name = name;
+		this.stateEntily = stateEntily;
+	}
+
+	/**
+	 * @return the stateEntily
+	 */
+	public StateEntily getStateEntily() {
+		return stateEntily;
+	}
+
+	/**
+	 * @param stateEntily the stateEntily to set
+	 */
+	public void setStateEntily(StateEntily stateEntily) {
+		this.stateEntily = stateEntily;
+	}
 
 	/**
 	 * @return the id
@@ -75,9 +116,10 @@ public class cityEntily implements Serializable, Comparable<cityEntily> {
 
 	@Override
 	public String toString() {
-		return "cityEntily [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + ", name=" + name + "]";
+		return "cityEntily [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + ", name=" + name
+				+ ", stateEntily=" + stateEntily + "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -89,6 +131,7 @@ public class cityEntily implements Serializable, Comparable<cityEntily> {
 		temp = Double.doubleToLongBits(longitude);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((stateEntily == null) ? 0 : stateEntily.hashCode());
 		return result;
 	}
 
@@ -100,7 +143,7 @@ public class cityEntily implements Serializable, Comparable<cityEntily> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		cityEntily other = (cityEntily) obj;
+		CityEntily other = (CityEntily) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -115,11 +158,16 @@ public class cityEntily implements Serializable, Comparable<cityEntily> {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (stateEntily == null) {
+			if (other.stateEntily != null)
+				return false;
+		} else if (!stateEntily.equals(other.stateEntily))
+			return false;
 		return true;
 	}
 
 	@Override
-	public int compareTo(cityEntily o) {
+	public int compareTo(CityEntily o) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
