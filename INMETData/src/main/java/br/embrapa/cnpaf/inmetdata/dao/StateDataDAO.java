@@ -153,7 +153,7 @@ public class StateDataDAO extends GenericDAO<StateDataDAO, StateEntily> {
 
 	@Override
 	public StateEntily find(Long id) throws PersistenceException {
-		return super.find(id, "SELECT * FROM " + TABLE_INMET_STATE + " WHERE station_id=" + id + ";");
+		return super.find(id, "SELECT * FROM " + TABLE_INMET_STATE + " WHERE id=" + id + ";");
 	}
 
 	@Override
@@ -227,7 +227,10 @@ public class StateDataDAO extends GenericDAO<StateDataDAO, StateEntily> {
 			id = queryResult.getObject("id") != null ? queryResult.getLong("id") : null;
 
 			// creating new entity with attributes retrieved from database
-			return new StateEntily(queryResult.getLong("id"), queryResult.getString("name"));
+			return new StateEntily(
+					queryResult.getLong("id"), //
+					queryResult.getString("name") //
+					);
 
 		} catch (Throwable e) {
 			throw this.error(NetworkUtil.getLocalIpAddress(), MessageEnum.GENERIC_DAO_ERROR_GET_ENTITY,

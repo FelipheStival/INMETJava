@@ -14,6 +14,7 @@ import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
 import br.embrapa.cnpaf.inmetdata.dao.StateDataDAO;
+import br.embrapa.cnpaf.inmetdata.entity.CityEntily;
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
@@ -175,6 +176,9 @@ public class InmetData {
 		try {;
 			StateDataDAO.getInstanceOf();
 			CityDataDAO.getInstanceOf();
+			InmetStationDAO.getInstanceOf();
+			
+			System.out.println(InmetStationDAO.getInstanceOf().list());
 			
 		}
 		catch(PersistenceException e) {

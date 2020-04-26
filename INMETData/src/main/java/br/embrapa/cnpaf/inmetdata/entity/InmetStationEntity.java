@@ -33,7 +33,6 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	private Long id;
 	private String code;
 	private CityEntily cityEntily;
-	private StateEntily stateEntily;
 	private LocalDate startDate;
 
 	/**
@@ -47,16 +46,13 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	 * @param id
 	 * @param code
 	 * @param cityEntily
-	 * @param stateEntily
 	 * @param startDate
 	 */
-	public InmetStationEntity(Long id, String code, br.embrapa.cnpaf.inmetdata.entity.CityEntily cityEntily,
-			br.embrapa.cnpaf.inmetdata.entity.StateEntily stateEntily, LocalDate startDate) {
+	public InmetStationEntity(Long id, String code, CityEntily cityEntily, LocalDate startDate) {
 		super();
 		this.id = id;
 		this.code = code;
 		this.cityEntily = cityEntily;
-		this.stateEntily = stateEntily;
 		this.startDate = startDate;
 	}
 
@@ -103,20 +99,6 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	}
 
 	/**
-	 * @return the stateEntily
-	 */
-	public StateEntily getStateEntily() {
-		return stateEntily;
-	}
-
-	/**
-	 * @param stateEntily the stateEntily to set
-	 */
-	public void setStateEntily(StateEntily stateEntily) {
-		this.stateEntily = stateEntily;
-	}
-
-	/**
 	 * @return the startDate
 	 */
 	public LocalDate getStartDate() {
@@ -129,12 +111,6 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
-	
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
 
 	@Override
 	public int hashCode() {
@@ -144,7 +120,6 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result + ((stateEntily == null) ? 0 : stateEntily.hashCode());
 		return result;
 	}
 
@@ -177,33 +152,13 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 				return false;
 		} else if (!startDate.equals(other.startDate))
 			return false;
-		if (stateEntily == null) {
-			if (other.stateEntily != null)
-				return false;
-		} else if (!stateEntily.equals(other.stateEntily))
-			return false;
 		return true;
 	}
 
-	/**
-	 * Retrieve the object from the json string.
-	 * 
-	 * @param json Json string of the object.
-	 * @return Object retrieved from the json string.
-	 * @throws ParameterValueInvalidException Error in the retrieving the object
-	 *                                        from the json string
-	 */
-	public static InmetStationEntity valueOf(final String json) throws ParameterValueInvalidException {
-		try {
-			// creating the object from json
-			InmetStationEntity entity = JsonUtil.getJsonConverter().fromJson(json, InmetStationEntity.class);
-			return entity;
-
-		} catch (Throwable e) {
-			throw ErrorUtil.getParameterValueInvalidExceptionError(NetworkUtil.getLocalIpAddress(),
-					MessageEnum.INMET_HOURLY_DATA_ENTITY_ERROR_JSON_PARSING,
-					InmetDiarlyDataEntity.class.getSimpleName(), "valueOf", e.getMessage(), null, json);
-		}
+	@Override
+	public String toString() {
+		return "InmetStationEntity [id=" + id + ", code=" + code + ", cityEntily=" + cityEntily + ", startDate="
+				+ startDate + "]";
 	}
 
 	@Override
@@ -211,5 +166,5 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	
 }
