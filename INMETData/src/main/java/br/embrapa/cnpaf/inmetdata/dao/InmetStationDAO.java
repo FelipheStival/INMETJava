@@ -100,35 +100,24 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 		Long id = entity != null ? entity.getId() : null;
 
 		// saving moduleAddress relationship with module address entity
-//		this.saveStationRelationship(entity.getStation());
+    	this.saveStationRelationship(entity.getCityEntily());
 
 		// save ou update the entity
 		id = super.save(//
 				entity.getId() //
-				, "INSERT INTO " + TABLE_INMET_STATION + "(" + //
-						"code," + //
-						"latitude," + //
-						"longitude," + //
-						"city," + //
-						"state," + //
-						"start_date)" + //
-						"VALUES(" + //
+				, "INSERT INTO public." + TABLE_INMET_STATION + "(" + //
+						"id_city," + //
+						"code," + "start_date)" + //
+						"VALUES (" + //
+						entity.getCityEntily().getId() + "," + //
 						"'" + entity.getCode() + "'" + "," + //
-						+entity.getLatitude() + "," + //
-						+entity.getLongitude() + "," + //
-						"'" + entity.getCity() + "'" + "," + //
-						"'" + entity.getState() + "'" + "," + //
-						"'" + entity.getStartDate() + "'" + //
-						")" + ";",
-				"UPDATE " + TABLE_INMET_STATION + " SET " //
-						+ "code=" + "'" + entity.getCode() + "'" + "," //
-						+ "latitude=" + entity.getLatitude() + "," //
-						+ "longitude=" + entity.getLongitude() + "," //
-						+ "city=" + "'" + entity.getCity() + "'" + "," //
-						+ "state=" + "'" + entity.getState() + "'" + ","//
-						+ "start_date=" + "'" + entity.getStartDate() + "'" //
-						+ "WHERE id=" + entity.getId() //
-						+ ";");
+						"'" + entity.getStartDate() + "'" + ");"//
+				, //
+				"UPDATE public." + TABLE_INMET_STATION + " SET " + //
+						"id_city=" + entity.getCityEntily().getId() + "," + //
+						"code=" + "'" + entity.getCode() + "'" + "," + //
+						"start_date=" + "'" + entity.getStartDate() + "'" + //
+						"WHERE id=" + entity.getId()); //
 
 		// return DAO instance
 		return this;
@@ -191,9 +180,9 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 		);
 
 		super.init(queries);
-		
+
 		List<InmetStationEntity> entities = this.list();
-		if(entities.size() <= 0) {
+		if (entities.size() <= 0) {
 			queries.add("INSERT INTO station(id_city,code,start_date) " //
 					+ "VALUES (298,'A422','21/07/2008'),\r\n" + //
 					"(160,'A360','22/04/2009'),\r\n" + //
@@ -201,7 +190,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 					"(26,'A908','16/12/2006'),\r\n" + //
 					"(424,'A756','15/08/2010'),\r\n" + //
 					"(176,'A045','02/10/2008'),\r\n" + //
-					"(358,'A 549','09/09/2007'),\r\n" + //
+					"(358,'A549','09/09/2007'),\r\n" + //
 					"(359,'A534','05/08/2007'),\r\n" + //
 					"(346,'A617','25/10/2006'),\r\n" + //
 					"(515,'A826','29/09/2006'),\r\n" + //
@@ -215,8 +204,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 					"(121,'A223','03/06/2008'),\r\n" + //
 					"(29,'A934','29/01/2008'),\r\n" + //
 					"(138,'A336','17/11/2007'),\r\n" + //
-					"(425,'A750','12/06/2008'),\r\n" + 
-					"(299,'A434','11/07/2008'),\r\n" + //
+					"(425,'A750','12/06/2008'),\r\n" + "(299,'A434','11/07/2008'),\r\n" + //
 					"(426,'S701','09/04/2018'),\r\n" + //
 					"(139,'A377','14/11/2019'),\r\n" + //
 					"(490,'A628','25/08/2017'),\r\n" + //
@@ -777,7 +765,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 					"(582,'A858','15/03/2008'),\r\n" + //
 					"(120,'A247','11/09/2016'),\r\n" + //
 					"(137,'A255','18/09/2019');");
-			
+
 			super.init(queries);
 		}
 		return this;
@@ -790,7 +778,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 		try {
 			// retrieving the attributes
 			id = queryResult.getObject("id") != null ? queryResult.getLong("id") : null;
-			
+
 			// Recovering relationship
 			Long idCity = queryResult.getLong("id_city");
 			CityEntily cityEntily = this.getStationRelationship(idCity);
@@ -821,7 +809,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 	 */
 	private InmetStationDAO saveStationRelationship(CityEntily entity) throws PersistenceException {
 		if (entity != null) {
-			CityDataDAO.getInstanceOf().save(entity);
+			InmetCityDataDAO.getInstanceOf().save(entity);
 		}
 		return this;
 	}
@@ -836,7 +824,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 	 */
 	private InmetStationDAO removeStationRelationship(Long entityId) {
 		try {
-			CityDataDAO.getInstanceOf().remove(entityId);
+			InmetCityDataDAO.getInstanceOf().remove(entityId);
 		} catch (Throwable e) {
 		}
 		return this;
@@ -853,7 +841,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 	 */
 	private CityEntily getStationRelationship(Long entityId) throws PersistenceException {
 		if (entityId != null) {
-			return CityDataDAO.getInstanceOf().find(entityId);
+			return InmetCityDataDAO.getInstanceOf().find(entityId);
 		}
 		return null;
 	}

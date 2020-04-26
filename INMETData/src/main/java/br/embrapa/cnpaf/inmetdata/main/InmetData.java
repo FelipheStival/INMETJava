@@ -9,11 +9,11 @@ import javax.swing.plaf.SliderUI;
 
 import org.w3c.dom.ls.LSInput;
 
-import br.embrapa.cnpaf.inmetdata.dao.CityDataDAO;
+import br.embrapa.cnpaf.inmetdata.dao.InmetCityDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
-import br.embrapa.cnpaf.inmetdata.dao.StateDataDAO;
+import br.embrapa.cnpaf.inmetdata.dao.InmetStateDataDAO;
 import br.embrapa.cnpaf.inmetdata.entity.CityEntily;
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
@@ -173,13 +173,17 @@ public class InmetData {
 	public static void main(String[] args) {
 
 		// creating the instance of the system
-		try {;
-			StateDataDAO.getInstanceOf();
-			CityDataDAO.getInstanceOf();
+		try {
+			;
+			InmetStateDataDAO.getInstanceOf();
+			InmetCityDataDAO.getInstanceOf();
 			InmetStationDAO.getInstanceOf();
-			
-		}
-		catch(PersistenceException e) {
+
+			List<InmetStationEntity> entities = InmetStationDAO.getInstanceOf().list();
+			InmetStationEntity insert = entities.get(0);
+			InmetStationDAO.getInstanceOf().save(insert);
+
+		} catch (PersistenceException e) {
 			e.printStackTrace();
 		}
 	}
