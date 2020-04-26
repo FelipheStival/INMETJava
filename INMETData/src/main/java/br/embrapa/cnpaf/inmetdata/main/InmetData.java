@@ -178,8 +178,6 @@ public class InmetData {
 			CityDataDAO.getInstanceOf();
 			InmetStationDAO.getInstanceOf();
 			
-			System.out.println(InmetStationDAO.getInstanceOf().list());
-			
 		}
 		catch(PersistenceException e) {
 			e.printStackTrace();
