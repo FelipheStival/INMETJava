@@ -15,7 +15,7 @@ import org.checkerframework.checker.units.qual.s;
 
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
-import br.embrapa.cnpaf.inmetdata.entity.StateEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
 import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
@@ -47,7 +47,7 @@ import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
  * @since 03/03/2020 (creation date)
  *
  */
-public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, StateEntily> {
+public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateEntily> {
 
 	private static InmetStateDataDAO instance;
 
@@ -102,7 +102,7 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, StateEntily
 	}
 
 	@Override
-	public InmetStateDataDAO save(StateEntily entity) throws PersistenceException {
+	public InmetStateDataDAO save(InmetStateEntily entity) throws PersistenceException {
 
 		// validate entity
 		Long id = entity != null ? entity.getId() : null;
@@ -152,12 +152,12 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, StateEntily
 	}
 
 	@Override
-	public StateEntily find(Long id) throws PersistenceException {
+	public InmetStateEntily find(Long id) throws PersistenceException {
 		return super.find(id, "SELECT * FROM " + TABLE_INMET_STATE + " WHERE id=" + id + ";");
 	}
 
 	@Override
-	public List<StateEntily> list() throws PersistenceException {
+	public List<InmetStateEntily> list() throws PersistenceException {
 		return super.list("SELECT * FROM " + TABLE_INMET_STATE + ";");
 	}
 
@@ -180,7 +180,7 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, StateEntily
 		super.init(queries);
 
 		// Iniciando populacao
-		List<StateEntily> stateEntilies = this.list();
+		List<InmetStateEntily> stateEntilies = this.list();
 		if (stateEntilies.size() <= 0) {
 			queries.add("INSERT INTO " + TABLE_INMET_STATE + "(name)" + //
 					"VALUES " + //
@@ -219,7 +219,7 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, StateEntily
 	}
 
 	@Override
-	protected StateEntily getEntity(ResultSet queryResult) throws PersistenceException {
+	protected InmetStateEntily getEntity(ResultSet queryResult) throws PersistenceException {
 
 		Long id = null;
 		try {
@@ -227,7 +227,7 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, StateEntily
 			id = queryResult.getObject("id") != null ? queryResult.getLong("id") : null;
 
 			// creating new entity with attributes retrieved from database
-			return new StateEntily(
+			return new InmetStateEntily(
 					queryResult.getLong("id"), //
 					queryResult.getString("name") //
 					);

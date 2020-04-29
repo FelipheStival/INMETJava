@@ -1,22 +1,20 @@
 package br.embrapa.cnpaf.inmetdata.entity;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 
-public class CityEntily implements Serializable, Comparable<CityEntily> {
+public class InmetCityEntily implements Serializable, Comparable<InmetCityEntily> {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private double latitude;
 	private double longitude;
 	private String name;
-	private StateEntily stateEntily;
-	private LocalDate starDate;
+	private InmetStateEntily stateEntily;
 
 	/**
 	 * 
 	 */
-	public CityEntily() {
+	public InmetCityEntily() {
 		super();
 	}
 
@@ -27,8 +25,8 @@ public class CityEntily implements Serializable, Comparable<CityEntily> {
 	 * @param name
 	 * @param stateEntily
 	 */
-	public CityEntily(Long id, double latitude, double longitude, String name,
-			br.embrapa.cnpaf.inmetdata.entity.StateEntily stateEntily) {
+	public InmetCityEntily(Long id, double latitude, double longitude, String name,
+			br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily stateEntily) {
 		super();
 		this.id = id;
 		this.latitude = latitude;
@@ -40,14 +38,14 @@ public class CityEntily implements Serializable, Comparable<CityEntily> {
 	/**
 	 * @return the stateEntily
 	 */
-	public StateEntily getStateEntily() {
+	public InmetStateEntily getStateEntily() {
 		return stateEntily;
 	}
 
 	/**
 	 * @param stateEntily the stateEntily to set
 	 */
-	public void setStateEntily(StateEntily stateEntily) {
+	public void setStateEntily(InmetStateEntily stateEntily) {
 		this.stateEntily = stateEntily;
 	}
 
@@ -143,7 +141,7 @@ public class CityEntily implements Serializable, Comparable<CityEntily> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CityEntily other = (CityEntily) obj;
+		InmetCityEntily other = (InmetCityEntily) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -167,7 +165,7 @@ public class CityEntily implements Serializable, Comparable<CityEntily> {
 	}
 
 	@Override
-	public int compareTo(CityEntily o) {
+	public int compareTo(InmetCityEntily o) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

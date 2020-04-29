@@ -13,7 +13,6 @@ import com.google.gson.JsonSerializer;
 
 import br.embrapa.cnpaf.inmetdata.exception.ServiceException;
 import br.embrapa.cnpaf.inmetdata.service.TimeService;
-import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
 /**
  * <br>

@@ -1,5 +1,6 @@
 package br.embrapa.cnpaf.inmetdata.service;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -397,27 +398,34 @@ public class TimeService implements Runnable {
 			return false;
 		}
 	}
-
-	public ArrayList<LocalDate> rangeDays(LocalDate start, LocalDate end) {
-		ArrayList<LocalDate> days = new ArrayList<LocalDate>();
-		Calendar calendar = Calendar.getInstance();
-		Calendar calendar2 = Calendar.getInstance();
-		TimeService service = null;
-		try {
-			service = TimeService.getInstanceOf();
-			Date startDate = service.toDate(start);
-			Date endDate = service.toDate(end);
-			calendar.setTime(startDate);
-			calendar2.setTime(endDate);
-
-			for (Calendar cal = calendar; cal.compareTo(calendar2) <= 0; cal.add(Calendar.DATE, 1)) {
-				LocalDate date = service.toLocalDate(cal.getTime());
-				days.add(date);
+	
+	public ArrayList<String> yearsIntervals(LocalDate inicio,LocalDate fim) {
+		Calendar startDate = Calendar.getInstance();
+		Calendar endDate = Calendar.getInstance();
+		Date date1 = Date.from(inicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Date date2 = Date.from(fim.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		
+		SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
+		ArrayList<String> generatedDates = new ArrayList<String>();
+		
+		startDate.setTime(date1);;
+		endDate.setTime(date2);
+		
+		while (startDate.getTimeInMillis() <= endDate.getTimeInMillis()) {
+			String data_backup = format.format(startDate.getTime()).toString();
+			
+			startDate.set(Calendar.YEAR, startDate.get(Calendar.YEAR) + 1);
+			String nova_data = format.format(startDate.getTime()).toString();
+			
+			if (startDate.getTimeInMillis() >= endDate.getTimeInMillis()) {
+				nova_data = format.format(endDate.getTime()).toString();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			startDate.set(Calendar.DAY_OF_MONTH, startDate.get(Calendar.DAY_OF_MONTH) + 1);
+			
+			String date = data_backup + "/" + nova_data ;
+			generatedDates.add(date);
 		}
-		return days;
+		return generatedDates;
 	}
 
 }

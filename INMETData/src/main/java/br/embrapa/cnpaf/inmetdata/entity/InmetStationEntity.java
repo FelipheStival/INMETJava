@@ -2,13 +2,6 @@ package br.embrapa.cnpaf.inmetdata.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
-import br.embrapa.cnpaf.inmetdata.exception.ParameterValueInvalidException;
-import br.embrapa.cnpaf.inmetdata.util.ErrorUtil;
-import br.embrapa.cnpaf.inmetdata.util.JsonUtil;
-import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
-import br.embrapa.cnpaf.inmetdata.util.StringUtil;
-import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
 /**
  * <br>
@@ -32,7 +25,7 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 
 	private Long id;
 	private String code;
-	private CityEntily cityEntily;
+	private InmetCityEntily cityEntily;
 	private LocalDate startDate;
 
 	/**
@@ -48,7 +41,7 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	 * @param cityEntily
 	 * @param startDate
 	 */
-	public InmetStationEntity(Long id, String code, CityEntily cityEntily, LocalDate startDate) {
+	public InmetStationEntity(Long id, String code, InmetCityEntily cityEntily, LocalDate startDate) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -87,14 +80,14 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	/**
 	 * @return the cityEntily
 	 */
-	public CityEntily getCityEntily() {
+	public InmetCityEntily getCityEntily() {
 		return cityEntily;
 	}
 
 	/**
 	 * @param cityEntily the cityEntily to set
 	 */
-	public void setCityEntily(CityEntily cityEntily) {
+	public void setCityEntily(InmetCityEntily cityEntily) {
 		this.cityEntily = cityEntily;
 	}
 

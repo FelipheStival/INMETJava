@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 
-import br.embrapa.cnpaf.inmetdata.entity.CityEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetCityEntily;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
@@ -781,7 +781,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 
 			// Recovering relationship
 			Long idCity = queryResult.getLong("id_city");
-			CityEntily cityEntily = this.getStationRelationship(idCity);
+			InmetCityEntily cityEntily = this.getStationRelationship(idCity);
 
 			// creating new entity with attributes retrieved from database
 			return new InmetStationEntity( //
@@ -807,7 +807,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 	 * @throws PersistenceException Occurrence of any problems in saving of the
 	 *                              relationship.
 	 */
-	private InmetStationDAO saveStationRelationship(CityEntily entity) throws PersistenceException {
+	private InmetStationDAO saveStationRelationship(InmetCityEntily entity) throws PersistenceException {
 		if (entity != null) {
 			InmetCityDataDAO.getInstanceOf().save(entity);
 		}
@@ -839,7 +839,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 	 * @throws PersistenceException Occurrence of any problems in retrieving of the
 	 *                              relationship.
 	 */
-	private CityEntily getStationRelationship(Long entityId) throws PersistenceException {
+	private InmetCityEntily getStationRelationship(Long entityId) throws PersistenceException {
 		if (entityId != null) {
 			return InmetCityDataDAO.getInstanceOf().find(entityId);
 		}

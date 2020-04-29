@@ -2,7 +2,7 @@ package br.embrapa.cnpaf.inmetdata.entity;
 
 import java.io.Serializable;
 
-public class StateEntily implements Serializable, Comparable<StateEntily> {
+public class InmetStateEntily implements Serializable, Comparable<InmetStateEntily> {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -11,7 +11,7 @@ public class StateEntily implements Serializable, Comparable<StateEntily> {
 	/**
 	 * 
 	 */
-	public StateEntily() {
+	public InmetStateEntily() {
 		super();
 	}
 
@@ -19,7 +19,7 @@ public class StateEntily implements Serializable, Comparable<StateEntily> {
 	 * @param id
 	 * @param name
 	 */
-	public StateEntily(Long id, String name) {
+	public InmetStateEntily(Long id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -75,7 +75,7 @@ public class StateEntily implements Serializable, Comparable<StateEntily> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StateEntily other = (StateEntily) obj;
+		InmetStateEntily other = (InmetStateEntily) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -90,7 +90,7 @@ public class StateEntily implements Serializable, Comparable<StateEntily> {
 	}
 
 	@Override
-	public int compareTo(StateEntily o) {
+	public int compareTo(InmetStateEntily o) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

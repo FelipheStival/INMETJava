@@ -19,6 +19,7 @@ import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
+import br.embrapa.cnpaf.inmetdata.service.TimeService;
 import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
 import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
@@ -212,7 +213,6 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 				"station_id =" + id_station + //
 				"AND" + //
 				"measurement_date =" + date; //
-		
 
 		try {
 			// execute sql query
@@ -351,5 +351,37 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 			return InmetStationDAO.getInstanceOf().find(entityId);
 		}
 		return null;
+	}
+
+	public LocalDate checkDate(Long id_station) throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+		LocalDate maxDate = null;
+
+		String query = "SELECT max(measurement_date) FROM " + //
+				TABLE_INMET_DAILY_DATA + //
+				" WHERE station_id= " + id_station; //
+		
+		System.out.println(query);
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+				if(resultSet.getString(1) != null) {
+					maxDate = TimeUtil.stringToLocalDate(resultSet.getString(1));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return maxDate;
 	}
 }

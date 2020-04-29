@@ -4,8 +4,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Level;
-import br.embrapa.cnpaf.inmetdata.entity.CityEntily;
-import br.embrapa.cnpaf.inmetdata.entity.StateEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetCityEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
 import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
@@ -36,7 +36,7 @@ import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
  * @since 03/03/2020 (creation date)
  *
  */
-public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
+public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, InmetCityEntily> {
 
 	private static InmetCityDataDAO instance;
 
@@ -91,7 +91,7 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 	}
 
 	@Override
-	public InmetCityDataDAO save(CityEntily entity) throws PersistenceException {
+	public InmetCityDataDAO save(InmetCityEntily entity) throws PersistenceException {
 
 		// validate entity
 		Long id = entity != null ? entity.getId() : null;
@@ -152,12 +152,12 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 	}
 
 	@Override
-	public CityEntily find(Long id) throws PersistenceException {
+	public InmetCityEntily find(Long id) throws PersistenceException {
 		return super.find(id, "SELECT * FROM " + TABLE_INMET_CITY + " WHERE id=" + id + ";");
 	}
 
 	@Override
-	public List<CityEntily> list() throws PersistenceException {
+	public List<InmetCityEntily> list() throws PersistenceException {
 		return super.list("SELECT * FROM " + TABLE_INMET_CITY + ";");
 	}
 
@@ -179,7 +179,7 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 		super.init(queries);
 
 		// Population init
-		List<CityEntily> entilies = this.list();
+		List<InmetCityEntily> entilies = this.list();
 		if (entilies.size() <= 0) {
 			queries.add("INSERT INTO city(id,id_state,latitude,longitude,name) VALUES " + //
 					"(1,1,-14.133,-47.5232,'Alto Paraiso'),\r\n" + //
@@ -771,7 +771,7 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 	}
 
 	@Override
-	protected CityEntily getEntity(ResultSet queryResult) throws PersistenceException {
+	protected InmetCityEntily getEntity(ResultSet queryResult) throws PersistenceException {
 
 		Long id = null;
 		try {
@@ -780,10 +780,10 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 
 			// Recovering relationship
 			Long idState = queryResult.getLong("id_state");
-			StateEntily entity = this.getStationRelationship(idState);
+			InmetStateEntily entity = this.getStationRelationship(idState);
 
 			// creating new entity with attributes retrieved from database
-			return new CityEntily(queryResult.getLong("id"), queryResult.getDouble("latitude"),
+			return new InmetCityEntily(queryResult.getLong("id"), queryResult.getDouble("latitude"),
 					queryResult.getDouble("longitude"), queryResult.getString("name"), entity);
 
 		} catch (Throwable e) {
@@ -802,7 +802,7 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 	 * @throws PersistenceException Occurrence of any problems in saving of the
 	 *                              relationship.
 	 */
-	private InmetCityDataDAO saveStationRelationship(StateEntily entity) throws PersistenceException {
+	private InmetCityDataDAO saveStationRelationship(InmetStateEntily entity) throws PersistenceException {
 		if (entity != null) {
 			InmetStateDataDAO.getInstanceOf().save(entity);
 		}
@@ -834,7 +834,7 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, CityEntily> {
 	 * @throws PersistenceException Occurrence of any problems in retrieving of the
 	 *                              relationship.
 	 */
-	private StateEntily getStationRelationship(Long entityId) throws PersistenceException {
+	private InmetStateEntily getStationRelationship(Long entityId) throws PersistenceException {
 		if (entityId != null) {
 			return InmetStateDataDAO.getInstanceOf().find(entityId);
 		}

@@ -2,9 +2,11 @@ package br.embrapa.cnpaf.inmetdata.main;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.InitialContext;
 import javax.swing.plaf.SliderUI;
 
 import org.w3c.dom.ls.LSInput;
@@ -14,11 +16,11 @@ import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStateDataDAO;
-import br.embrapa.cnpaf.inmetdata.entity.CityEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetCityEntily;
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
-import br.embrapa.cnpaf.inmetdata.entity.StateEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.GenericException;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
@@ -171,20 +173,40 @@ public class InmetData {
 	 *                              DAOs.
 	 */
 	public static void main(String[] args) {
-
-		// creating the instance of the system
 		try {
-			;
+			// initializing DAOs
 			InmetStateDataDAO.getInstanceOf();
 			InmetCityDataDAO.getInstanceOf();
 			InmetStationDAO.getInstanceOf();
+			InmetHourlyDataDAO.getInstanceOf();
+			InmetDiarlyDataDAO.getInstanceOf();
 
+			// initializing services
+			TimeService.getInstanceOf();
+			InmetService.getInstanceOf();
+
+			// Initializing variables
+			LocalDate yesterday = TimeService.getInstanceOf().getDate().minusDays(1);
+			LocalDate startDate;
+			List<String> period ;
+
+			// Obtendo estacoes
 			List<InmetStationEntity> entities = InmetStationDAO.getInstanceOf().list();
-			InmetStationEntity insert = entities.get(0);
-			InmetStationDAO.getInstanceOf().save(insert);
+			for (InmetStationEntity entity : entities) {
+				// Obtendo ultima data salva estacao
+				startDate = InmetDiarlyDataDAO.getInstanceOf().checkDate(entity.getId());
+				if (startDate == null) {
+					startDate = entity.getStartDate();
+				}
+				//Obtendo periodo
+				period = TimeService.getInstanceOf().yearsIntervals(startDate,yesterday);
+				System.out.println(period.size());
+				
+			}
 
-		} catch (PersistenceException e) {
+		} catch (ServiceException | PersistenceException e) {
 			e.printStackTrace();
 		}
+		// creating the instance of the system
 	}
 }
