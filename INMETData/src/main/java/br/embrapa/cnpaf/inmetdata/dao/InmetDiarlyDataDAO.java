@@ -14,6 +14,8 @@ import javax.swing.text.html.parser.Entity;
 import org.apache.log4j.Level;
 import org.checkerframework.checker.units.qual.s;
 
+import com.sun.mail.util.QEncoderStream;
+
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
@@ -111,7 +113,7 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 
 		// save ou update the entity
 		id = super.save(//
-				entity.getId() //
+				id //
 				, "INSERT INTO " + "public." + TABLE_INMET_DAILY_DATA + "(" + //
 						"station_id," + //
 						"measurement_date," + //
@@ -253,17 +255,12 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 						+ ", maximum_relative_air_humidity real DEFAULT NULL "//
 						+ ", wind_speed real DEFAULT NULL "//
 						+ ", wind_direction integer DEFAULT NULL "//
-						+ ", blast real DEFAULT NULL "//
 						+ ", global_radiation real DEFAULT NULL "//
 						+ ", minimum_dew_point real DEFAULT NULL "//
 						+ ", maximum_dew_point real DEFAULT NULL "//
 						+ ", rain real DEFAULT NULL "//
 						+ ", unique (id, measurement_date) "//
 						+ "); "//
-		);
-		queries.add(//
-				"CREATE INDEX IF NOT EXISTS " + INDEX_INMET_DAILY_DATA_STATION_AND_MEASUREMENT_DATE //
-						+ " ON " + TABLE_INMET_DAILY_DATA + " (id, measurement_date); "//
 		);
 
 		// initializing table
@@ -361,9 +358,7 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 
 		String query = "SELECT max(measurement_date) FROM " + //
 				TABLE_INMET_DAILY_DATA + //
-				" WHERE station_id= " + id_station; //
-		
-		System.out.println(query);
+				" WHERE station_id= " + id_station ; //
 
 		try {
 			// execute sql query

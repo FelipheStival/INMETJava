@@ -91,7 +91,7 @@ public class InmetStateEntily implements Serializable, Comparable<InmetStateEnti
 
 	@Override
 	public int compareTo(InmetStateEntily o) {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 

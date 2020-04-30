@@ -55,7 +55,7 @@ import tech.tablesaw.selection.Selection;
  */
 public class InmetService extends GenericService<InmetService> {
 
-	public static final String INMET_WEB_SERVICE_URL = "http://apitempo.inmet.gov.br/estacao";
+	public static final String INMET_WEB_SERVICE_URL = "https://apitempo.inmet.gov.br/estacao";
 
 	public static final int REQUEST_ATTEMPTS = 6;
 	public static final int RANDOMIZE_TIME_BETWEEN_ATTEMPTS = 100;
@@ -155,6 +155,7 @@ public class InmetService extends GenericService<InmetService> {
 						.resolveTemplate("endDate", this.getTimeService().getFormatterSqlDate().format(endDate))//
 						.resolveTemplate("stationCode", station.getCode())//
 				;
+				
 				response = serviceUrl.request().get(String.class);
 
 				// retrieving result from response
@@ -204,7 +205,7 @@ public class InmetService extends GenericService<InmetService> {
 	 */
 
 	public List<InmetDiarlyDataEntity> getDailyData(List<InmetHourlyDataEntity> HourlyData) {
-		// Lista retorno
+		//Starting variables
 		List<InmetDiarlyDataEntity> DiarlyData = new ArrayList<InmetDiarlyDataEntity>();
 
 		// Creating dataframe

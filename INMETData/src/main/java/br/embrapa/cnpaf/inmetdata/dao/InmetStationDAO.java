@@ -100,7 +100,7 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 		Long id = entity != null ? entity.getId() : null;
 
 		// saving moduleAddress relationship with module address entity
-    	this.saveStationRelationship(entity.getCityEntily());
+		this.saveStationRelationship(entity.getCityEntily());
 
 		// save ou update the entity
 		id = super.save(//
@@ -182,9 +182,12 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 		super.init(queries);
 
 		List<InmetStationEntity> entities = this.list();
-		if (entities.size() <= 0) {
+		
+		if (entities.size() == 0) {
+			queries.clear();
 			queries.add("INSERT INTO station(id_city,code,start_date) " //
-					+ "VALUES (298,'A422','21/07/2008'),\r\n" + //
+					+ "VALUES " //
+					+ "(298,'A422','21/07/2008'),\r\n" + //
 					"(160,'A360','22/04/2009'),\r\n" + //
 					"(345,'A657','25/09/2011'),\r\n" + //
 					"(26,'A908','16/12/2006'),\r\n" + //
@@ -204,7 +207,8 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 					"(121,'A223','03/06/2008'),\r\n" + //
 					"(29,'A934','29/01/2008'),\r\n" + //
 					"(138,'A336','17/11/2007'),\r\n" + //
-					"(425,'A750','12/06/2008'),\r\n" + "(299,'A434','11/07/2008'),\r\n" + //
+					"(425,'A750','12/06/2008'),\r\n" + //
+					"(299,'A434','11/07/2008'),\r\n" + //
 					"(426,'S701','09/04/2018'),\r\n" + //
 					"(139,'A377','14/11/2019'),\r\n" + //
 					"(490,'A628','25/08/2017'),\r\n" + //

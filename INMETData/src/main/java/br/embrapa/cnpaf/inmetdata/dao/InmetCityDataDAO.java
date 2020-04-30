@@ -180,7 +180,8 @@ public class InmetCityDataDAO extends GenericDAO<InmetCityDataDAO, InmetCityEnti
 
 		// Population init
 		List<InmetCityEntily> entilies = this.list();
-		if (entilies.size() <= 0) {
+		if (entilies.size() == 0) {
+			queries.clear();
 			queries.add("INSERT INTO city(id,id_state,latitude,longitude,name) VALUES " + //
 					"(1,1,-14.133,-47.5232,'Alto Paraiso'),\r\n" + //
 					"(2,1,-15.9026,-52.2451,'Aragarcas'),\r\n" + //

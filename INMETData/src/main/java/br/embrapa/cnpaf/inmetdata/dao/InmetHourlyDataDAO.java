@@ -111,7 +111,7 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 
 		// save ou update the entity
 		id = super.save(//
-				entity.getId() //
+				id //
 				, "INSERT INTO " + "public." + TABLE_INMET_HOURLY_DATA + "(" + //
 						"station_id," + //
 						"measurement_date," + //
@@ -253,11 +253,6 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 						+ ", unique (id, measurement_date) "//
 						+ "); "//
 		);
-		queries.add(//
-				"CREATE INDEX IF NOT EXISTS " + INDEX_INMET_HOURLY_DATA_STATION_AND_MEASUREMENT_DATE //
-						+ " ON " + TABLE_INMET_HOURLY_DATA + " (id, measurement_date); "//
-		);
-
 
 		// initializing table
 		super.init(queries);

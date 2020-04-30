@@ -2,6 +2,9 @@ package br.embrapa.cnpaf.inmetdata.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
@@ -376,7 +379,12 @@ public class InmetDiarlyDataEntity implements Serializable, Comparable<InmetDiar
 	 */
 	public String toString() {
 		try {
-			return JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
+			JsonParser parse = new JsonParser();
+			String json = JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
+			JsonObject jsonObject = (JsonObject) parse.parse(json);
+			jsonObject.remove("entilyStation");
+			jsonObject.addProperty("CD_ESTACAO", entilyStation.getCode());
+
 		} catch (Throwable e) {
 		}
 		return null;

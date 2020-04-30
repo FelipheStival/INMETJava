@@ -3,6 +3,9 @@ package br.embrapa.cnpaf.inmetdata.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import br.embrapa.cnpaf.inmetdata.util.StringUtil;
+import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
+
 /**
  * <br>
  * <p>
@@ -155,9 +158,14 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 	}
 
 	@Override
-	public int compareTo(InmetStationEntity o) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(InmetStationEntity entity) {
+		// For ascending order
+		String ownEntity = StringUtil.removeAccent(this.getCode() + ";" //
+				+ TimeUtil.formatterLocalDateToYYYYMMDD(this.getStartDate()));//
+		String otherEntity = StringUtil.removeAccent(this.getCode() + ";"//
+				+ TimeUtil.formatterLocalDateToYYYYMMDD(entity.getStartDate()));//
+
+		return ownEntity.compareTo(otherEntity);
 	}
-	
+
 }

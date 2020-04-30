@@ -109,7 +109,7 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 
 		// save ou update the entity
 		id = super.save(//
-				entity.getId() //
+				id //
 				,
 				"INSERT INTO public." + TABLE_INMET_STATE + "(" +
 						"name" + ")" +
@@ -181,7 +181,8 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 
 		// Iniciando populacao
 		List<InmetStateEntily> stateEntilies = this.list();
-		if (stateEntilies.size() <= 0) {
+		if (stateEntilies.size() == 0) {
+			queries.clear();
 			queries.add("INSERT INTO " + TABLE_INMET_STATE + "(name)" + //
 					"VALUES " + //
 					"('GO'),\r\n" + //
@@ -228,7 +229,7 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 
 			// creating new entity with attributes retrieved from database
 			return new InmetStateEntily(
-					queryResult.getLong("id"), //
+					id, //
 					queryResult.getString("name") //
 					);
 

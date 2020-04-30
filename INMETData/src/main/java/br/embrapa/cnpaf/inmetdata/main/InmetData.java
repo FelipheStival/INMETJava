@@ -9,7 +9,7 @@ import java.util.List;
 import javax.naming.InitialContext;
 import javax.swing.plaf.SliderUI;
 
-import org.w3c.dom.ls.LSInput;
+import com.ibm.icu.impl.CalendarAstronomer.Horizon;
 
 import br.embrapa.cnpaf.inmetdata.dao.InmetCityDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
@@ -93,7 +93,7 @@ public class InmetData {
 	 * @return Instance of SitisEmbedded.
 	 * @throws ServiceException Error in initializing system services and DAOs.
 	 */
-	private InmetData init() throws ServiceException {
+	private static InmetData init() throws ServiceException {
 		try {
 			// initializing DAOs
 			InmetStationDAO.getInstanceOf();
@@ -175,38 +175,31 @@ public class InmetData {
 	public static void main(String[] args) {
 		try {
 			// initializing DAOs
-			InmetStateDataDAO.getInstanceOf();
-			InmetCityDataDAO.getInstanceOf();
-			InmetStationDAO.getInstanceOf();
-			InmetHourlyDataDAO.getInstanceOf();
-			InmetDiarlyDataDAO.getInstanceOf();
-
+			InmetStateDataDAO inmetStateDataDA = InmetStateDataDAO.getInstanceOf();
+			InmetCityDataDAO inmetCityDataDAO = InmetCityDataDAO.getInstanceOf();
+			InmetStationDAO inmetStationDAO = InmetStationDAO.getInstanceOf();
+			InmetHourlyDataDAO  hourlyDataDAO = InmetHourlyDataDAO.getInstanceOf();
+			InmetDiarlyDataDAO diarlyDataDAO = InmetDiarlyDataDAO.getInstanceOf();
+			
 			// initializing services
 			TimeService.getInstanceOf();
 			InmetService.getInstanceOf();
-
-			// Initializing variables
-			LocalDate yesterday = TimeService.getInstanceOf().getDate().minusDays(1);
-			LocalDate startDate;
-			List<String> period ;
-
-			// Obtendo estacoes
-			List<InmetStationEntity> entities = InmetStationDAO.getInstanceOf().list();
-			for (InmetStationEntity entity : entities) {
-				// Obtendo ultima data salva estacao
-				startDate = InmetDiarlyDataDAO.getInstanceOf().checkDate(entity.getId());
-				if (startDate == null) {
-					startDate = entity.getStartDate();
-				}
-				//Obtendo periodo
-				period = TimeService.getInstanceOf().yearsIntervals(startDate,yesterday);
-				System.out.println(period.size());
-				
-			}
-
-		} catch (ServiceException | PersistenceException e) {
-			e.printStackTrace();
+			
+			// starting variables
+			List<InmetStationEntity> stationEntities;
+			
+			
+			//starting
+			stationEntities = inmetStationDAO.list();
+			System.out.println(stationEntities.size());
+			
+			
 		}
-		// creating the instance of the system
-	}
+		catch(GenericException e) {
+			
+		}
+		
+	}	
+			
+		
 }
