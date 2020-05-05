@@ -206,7 +206,8 @@ public class InmetService extends GenericService<InmetService> {
 
 	public List<InmetDiarlyDataEntity> getDailyData(List<InmetHourlyDataEntity> HourlyData) {
 		//Starting variables
-		List<InmetDiarlyDataEntity> DiarlyData = new ArrayList<InmetDiarlyDataEntity>();
+		InmetDiarlyDataEntity  DiarlyData = null ;
+		List<InmetDiarlyDataEntity> diarlyData = new ArrayList<InmetDiarlyDataEntity>();
 
 		// Creating dataframe
 		Table dataFrameHourly = Table.create("Data").addColumns(StringColumn.create("CD_ESTACAO"),
@@ -242,12 +243,14 @@ public class InmetService extends GenericService<InmetService> {
 			//
 			Table FiltredByDate = dataFrameHourly.where(dataFrameHourly.stringColumn("DT_MEDICAO")//
 					.isEqualTo(uniqueDates.getString(i)));//
+			
+			FiltredByDate = FiltredByDate.sortDescendingOn("DT_MEDICAO");
 
 			String station = FiltredByDate.getString(0, 0);
 			Long stationId = (Long) FiltredByDate.get(0, 1);
 			LocalDate date = TimeUtil.stringToLocalDate(FiltredByDate.getString(0, 2));
 
-			DiarlyData.add(new InmetDiarlyDataEntity( //
+			 DiarlyData = new InmetDiarlyDataEntity( //
 					null, //
 					HourlyData.get(i).getEntilyStation(),
 					date, //
@@ -261,13 +264,12 @@ public class InmetService extends GenericService<InmetService> {
 					positiveNumbers(FiltredByDate.floatColumn(11)), //
 					findSmaller(FiltredByDate.floatColumn(12)), //
 					findBigger(FiltredByDate.floatColumn(13)), //
-					addAll(FiltredByDate.floatColumn(14))));//
+					addAll(FiltredByDate.floatColumn(14)));//
+			 
+			 diarlyData.add(DiarlyData);
 		}
-
-		if (!DiarlyData.isEmpty()) {
-			return DiarlyData;
-		}
-		return null;
+		
+		return diarlyData;
 	}
 
 	/**

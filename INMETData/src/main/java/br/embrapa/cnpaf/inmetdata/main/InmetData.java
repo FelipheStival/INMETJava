@@ -11,6 +11,7 @@ import javax.swing.plaf.SliderUI;
 
 import com.ibm.icu.impl.CalendarAstronomer.Horizon;
 
+import br.embrapa.cnpaf.classes.Period;
 import br.embrapa.cnpaf.inmetdata.dao.InmetCityDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
@@ -178,28 +179,59 @@ public class InmetData {
 			InmetStateDataDAO inmetStateDataDA = InmetStateDataDAO.getInstanceOf();
 			InmetCityDataDAO inmetCityDataDAO = InmetCityDataDAO.getInstanceOf();
 			InmetStationDAO inmetStationDAO = InmetStationDAO.getInstanceOf();
-			InmetHourlyDataDAO  hourlyDataDAO = InmetHourlyDataDAO.getInstanceOf();
+			InmetHourlyDataDAO hourlyDataDAO = InmetHourlyDataDAO.getInstanceOf();
 			InmetDiarlyDataDAO diarlyDataDAO = InmetDiarlyDataDAO.getInstanceOf();
-			
+
 			// initializing services
 			TimeService.getInstanceOf();
 			InmetService.getInstanceOf();
-			
+
 			// starting variables
 			List<InmetStationEntity> stationEntities;
-			
-			
-			//starting
+			List<InmetHourlyDataEntity> hourlyData;
+			List<InmetDiarlyDataEntity> diarlyData;
+			List<Period> periods;
+			LocalDate startDate;
+			LocalDate endDate;
+			LocalDate dataCollected;
+
+			// starting
 			stationEntities = inmetStationDAO.list();
-			System.out.println(stationEntities.size());
-			
-			
+			LocalDate yesterday = TimeService.getInstanceOf().getDate().minusDays(1);
+			stationEntities = inmetStationDAO.list();
+
+			for (int i = 0; i < stationEntities.size(); i++) {
+
+				// Generating periods
+				periods = TimeService.getInstanceOf().intervalos(stationEntities.get(i).getStartDate(), yesterday);
+
+				for (int j = 0; j < periods.size(); j++) {
+					// Getting date
+					hourlyData = InmetService.getInstanceOf().getHourlyData(stationEntities.get(i),
+							periods.get(j).getStart(), periods.get(j).getEnd());
+
+					if (hourlyData != null) {
+						// Obtendo dados diarios
+						diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
+
+						// Inserindo dados horarios
+						for (int k = 0; k < hourlyData.size(); k++) {
+								hourlyDataDAO.save(hourlyData.get(k));
+						}
+						// Inserindo dados diarios
+						for (int k = 0; k < diarlyData.size(); k++) {
+								diarlyDataDAO.save(diarlyData.get(k));
+						}
+					}
+				}
+			}
+
+		} catch (GenericException e) {
+			e.printStackTrace();
 		}
-		catch(GenericException e) {
-			
-		}
-		
-	}	
-			
-		
+
+		// Finalizing application
+		System.exit(0);
+	}
+
 }

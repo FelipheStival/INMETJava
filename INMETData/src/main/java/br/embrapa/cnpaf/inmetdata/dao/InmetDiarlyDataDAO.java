@@ -203,18 +203,23 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 		return super.list("SELECT * FROM " + TABLE_INMET_DAILY_DATA + ";");
 	}
 
+	/**
+	 * The method for verifying that the data is entered in the bank
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
 	public boolean checkDate(Long id_station, LocalDate date) throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();
 		Statement statement = null;
 
-		String query = "SELECT measurement_date" + //
-				"FROM " + //
-				"public.inmet " + TABLE_INMET_DAILY_DATA + //
-				"WHERE " + //
-				"station_id =" + id_station + //
-				"AND" + //
-				"measurement_date =" + date; //
+		String query = "SELECT measurement_date " //
+				+ "FROM inmet_daily_data " //
+				+ "WHERE station_id = " + id_station + //
+				" AND "//
+				+ " measurement_date =" + "'" + date + "'"; //
 
 		try {
 			// execute sql query
@@ -350,33 +355,4 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 		return null;
 	}
 
-	public LocalDate checkDate(Long id_station) throws PersistenceException {
-		// initializing variables
-		Connection connection = this.getConnection();
-		Statement statement = null;
-		LocalDate maxDate = null;
-
-		String query = "SELECT max(measurement_date) FROM " + //
-				TABLE_INMET_DAILY_DATA + //
-				" WHERE station_id= " + id_station ; //
-
-		try {
-			// execute sql query
-			statement = connection.createStatement();
-			statement.execute(query);
-			ResultSet resultSet = statement.getResultSet();
-
-			// getting result
-			while (resultSet.next()) {
-				if(resultSet.getString(1) != null) {
-					maxDate = TimeUtil.stringToLocalDate(resultSet.getString(1));
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return maxDate;
-	}
 }

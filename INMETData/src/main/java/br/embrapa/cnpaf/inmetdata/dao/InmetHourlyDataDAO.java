@@ -259,35 +259,22 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 		return this;
 	}
 
-	public boolean checkDate(LocalDate date, Long id_station) throws PersistenceException {
+	/**
+	 * This method checks if the date and time are inserted in the bank
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+	public boolean checkDate(Long id_station, LocalDate date, String time) throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();
 		Statement statement = null;
 
-		String query = "SELECT " //
-				+ "id, " //
-				+ "station_id, " //
-				+ "measurement_date," //
-				+ " measure_time, " //
-				+ "minimum_temperature," //
-				+ " maximum_temperature," //
-				+ " instant_temperature," //
-				+ " minimum_precipitation," //
-				+ " maximum_precipitation," //
-				+ " instant_precipitation," //
-				+ " minimum_relative_air_humidity," //
-				+ " maximum_relative_air_humidity, " //
-				+ "instant_relative_air_humidity," //
-				+ " wind_speed, wind_direction," //
-				+ " blast, global_radiation," //
-				+ " minimum_dew_point, " //
-				+ "maximum_dew_point, " //
-				+ "instant_dew_point, " //
-				+ "rain" + //
-				" FROM public." + TABLE_INMET_HOURLY_DATA //
-				+ " WHERE " //
-				+ " measurement_date=" + "'" + date + "'" //
-				+ "AND " + "station_id=" + "'" + id_station + "'" + ";"; //
+		String query = "SELECT measurement_date " //
+				+ "FROM inmet_hourly_data WHERE station_id =" + id_station //
+				+ "AND  measurement_date =" + "'" + date + "'" //
+				+ " AND measure_time = " + "'" + time + "'"; //
 
 		try {
 			// execute sql query
@@ -299,6 +286,7 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 			while (resultSet.next()) {
 				return true;
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

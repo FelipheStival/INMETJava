@@ -17,7 +17,9 @@ import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
+import br.embrapa.cnpaf.classes.Period;
 import br.embrapa.cnpaf.inmetdata.exception.ServiceException;
+import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
 /**
  * <br>
@@ -398,34 +400,35 @@ public class TimeService implements Runnable {
 			return false;
 		}
 	}
-	
-	public ArrayList<String> yearsIntervals(LocalDate inicio,LocalDate fim) {
-		Calendar startDate = Calendar.getInstance();
-		Calendar endDate = Calendar.getInstance();
-		Date date1 = Date.from(inicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		Date date2 = Date.from(fim.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+	public ArrayList<Period> intervalos(LocalDate inicio,LocalDate fim) {
+		Calendar inicio_data = Calendar.getInstance();
+		Calendar fim_data = Calendar.getInstance();
+		SimpleDateFormat formatar = new SimpleDateFormat("yyyy-MM-dd");
+		ArrayList<Period> url_estacao = new ArrayList<Period>();
 		
-		SimpleDateFormat format= new SimpleDateFormat("yyyy-MM-dd");
-		ArrayList<String> generatedDates = new ArrayList<String>();
-		
-		startDate.setTime(date1);;
-		endDate.setTime(date2);
-		
-		while (startDate.getTimeInMillis() <= endDate.getTimeInMillis()) {
-			String data_backup = format.format(startDate.getTime()).toString();
-			
-			startDate.set(Calendar.YEAR, startDate.get(Calendar.YEAR) + 1);
-			String nova_data = format.format(startDate.getTime()).toString();
-			
-			if (startDate.getTimeInMillis() >= endDate.getTimeInMillis()) {
-				nova_data = format.format(endDate.getTime()).toString();
-			}
-			startDate.set(Calendar.DAY_OF_MONTH, startDate.get(Calendar.DAY_OF_MONTH) + 1);
-			
-			String date = data_backup + "/" + nova_data ;
-			generatedDates.add(date);
+		// Convetendo para data
+		try {
+			inicio_data.setTime(formatar.parse(inicio.toString()));
+			fim_data.setTime(formatar.parse(fim.toString()));
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
-		return generatedDates;
+		// Construindo intervalos
+		while (inicio_data.getTimeInMillis() <= fim_data.getTimeInMillis()) {
+			String data_backup = formatar.format(inicio_data.getTime()).toString();
+			// Acrecentando um ano
+			inicio_data.set(Calendar.YEAR, inicio_data.get(Calendar.YEAR) + 1);
+			String nova_data = formatar.format(inicio_data.getTime()).toString();
+			// Verificando se data e maior que o limite
+			if (inicio_data.getTimeInMillis() >= fim_data.getTimeInMillis()) {
+				nova_data = formatar.format(fim_data.getTime()).toString();
+			}
+			inicio_data.set(Calendar.DAY_OF_MONTH, inicio_data.get(Calendar.DAY_OF_MONTH) + 1);
+			// Populando arraylist
+			url_estacao.add(new Period(TimeUtil.stringToLocalDate(data_backup),TimeUtil.stringToLocalDate(nova_data)));
+		}
+		return url_estacao;
 	}
 
 }
