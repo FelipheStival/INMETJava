@@ -17,8 +17,8 @@ import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
-import br.embrapa.cnpaf.classes.Period;
 import br.embrapa.cnpaf.inmetdata.exception.ServiceException;
+import br.embrapa.cnpaf.inmetdata.period.period;
 import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
 /**
@@ -391,7 +391,7 @@ public class TimeService implements Runnable {
 			return false;
 		}
 	}
-
+	
 	public boolean isAfter(Date firstDate, LocalDate secondLocalDate) {
 		LocalDate firstLocalDate = this.toLocalDate(firstDate);
 		if (firstLocalDate.isAfter(secondLocalDate)) {
@@ -400,13 +400,21 @@ public class TimeService implements Runnable {
 			return false;
 		}
 	}
-
-	public ArrayList<Period> intervalos(LocalDate inicio,LocalDate fim) {
+	
+	/**
+	 * Sets the time acceleration rate to the time service.
+	 * 
+	 * @param start Start of period
+	 * @param end End of period
+	 * @return list with periods
+	 */
+	
+	public ArrayList<period> intervalos(LocalDate inicio, LocalDate fim) {
 		Calendar inicio_data = Calendar.getInstance();
 		Calendar fim_data = Calendar.getInstance();
 		SimpleDateFormat formatar = new SimpleDateFormat("yyyy-MM-dd");
-		ArrayList<Period> url_estacao = new ArrayList<Period>();
-		
+		ArrayList<period> url_estacao = new ArrayList<period>();
+
 		// Convetendo para data
 		try {
 			inicio_data.setTime(formatar.parse(inicio.toString()));
@@ -426,7 +434,7 @@ public class TimeService implements Runnable {
 			}
 			inicio_data.set(Calendar.DAY_OF_MONTH, inicio_data.get(Calendar.DAY_OF_MONTH) + 1);
 			// Populando arraylist
-			url_estacao.add(new Period(TimeUtil.stringToLocalDate(data_backup),TimeUtil.stringToLocalDate(nova_data)));
+			url_estacao.add(new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(nova_data)));
 		}
 		return url_estacao;
 	}

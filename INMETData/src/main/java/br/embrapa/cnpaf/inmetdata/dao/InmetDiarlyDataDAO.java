@@ -110,6 +110,9 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 
 		// validate entity
 		Long id = entity != null ? entity.getId() : null;
+		
+		// save ou update the entity
+		this.saveStationRelationship(entity.getEntilyStation());
 
 		// save ou update the entity
 		id = super.save(//
@@ -204,22 +207,23 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 	}
 
 	/**
-	 * The method for verifying that the data is entered in the bank
+	 * this method returns a list with daily data, chosen for a period of time
 	 * 
 	 * @return Returns the instance of DAO.
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
-	public boolean checkDate(Long id_station, LocalDate date) throws PersistenceException {
+	public List<InmetDiarlyDataEntity> listByPeriodTime(LocalDate initDate, LocalDate endDate)
+			throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();
 		Statement statement = null;
+		List<InmetDiarlyDataEntity> data = new ArrayList<InmetDiarlyDataEntity>();
 
-		String query = "SELECT measurement_date " //
-				+ "FROM inmet_daily_data " //
-				+ "WHERE station_id = " + id_station + //
-				" AND "//
-				+ " measurement_date =" + "'" + date + "'"; //
+		String query = " SELECT * FROM public. " + TABLE_INMET_DAILY_DATA + //
+				" WHERE measurement_date >= " + "'" + initDate + "'" + //
+				" AND " + //
+				"measurement_date <= " + "'" + endDate + "'";//
 
 		try {
 			// execute sql query
@@ -229,14 +233,121 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 
 			// getting result
 			while (resultSet.next()) {
-				return true;
+
+				// getting relationship
+				InmetStationEntity entity = this.getStationRelationship(resultSet.getLong("station_id"));
+
+				data.add(new InmetDiarlyDataEntity( //
+						resultSet.getLong("id"), //
+						entity, //
+						resultSet.getDate("measurement_date").toLocalDate(), //
+						resultSet.getFloat("minimum_temperature"), //
+						resultSet.getFloat("maximum_temperature"), //
+						resultSet.getFloat("minimum_precipitation"), //
+						resultSet.getFloat("maximum_precipitation"), //
+						resultSet.getFloat("minimum_relative_air_humidity"), //
+						resultSet.getFloat("maximum_relative_air_humidity"), resultSet.getFloat("wind_speed"), //
+						resultSet.getFloat("wind_direction"), //
+						resultSet.getFloat("global_radiation"), //
+						resultSet.getFloat("minimum_dew_point"), //
+						resultSet.getFloat("maximum_dew_point"), //
+						resultSet.getFloat("rain")));//
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return data;
+
+	}
+
+	/**
+	 * This method returns a list of daily data for the chosen station
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+	public List<InmetDiarlyDataEntity> listByStation(long idStation) throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+		List<InmetDiarlyDataEntity> diarlyData = new ArrayList<InmetDiarlyDataEntity>();
+
+		String query = " SELECT  * FROM " + //
+				"public." + TABLE_INMET_DAILY_DATA + //
+				" WHERE station_id = " + idStation; //
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+
+				// getting relationship
+				InmetStationEntity entity = this.getStationRelationship(resultSet.getLong("station_id"));
+
+				diarlyData.add(new InmetDiarlyDataEntity( //
+						resultSet.getLong("id"), //
+						entity, //
+						resultSet.getDate("measurement_date").toLocalDate(), //
+						resultSet.getFloat("minimum_temperature"), //
+						resultSet.getFloat("maximum_temperature"), //
+						resultSet.getFloat("minimum_precipitation"), //
+						resultSet.getFloat("maximum_precipitation"), //
+						resultSet.getFloat("minimum_relative_air_humidity"), //
+						resultSet.getFloat("maximum_relative_air_humidity"), resultSet.getFloat("wind_speed"), //
+						resultSet.getFloat("wind_direction"), //
+						resultSet.getFloat("global_radiation"), //
+						resultSet.getFloat("minimum_dew_point"), //
+						resultSet.getFloat("maximum_dew_point"), //
+						resultSet.getFloat("rain")));//
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return diarlyData;
+	}
+
+	/**
+	 * The method for verifying that the data is entered in the bank
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+	public LocalDate getBiggerDateByStation(Long id_station) throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+		LocalDate maxDate = null;
+
+		String query = "SELECT max(measurement_date) " + //
+				" FROM " + TABLE_INMET_DAILY_DATA + //
+				" WHERE station_id = " + id_station; //
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+				if (resultSet.getString("max") != null) {
+					maxDate = TimeUtil.stringToLocalDate(resultSet.getString("max"));
+				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		return false;
+		
+		return maxDate;
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import javax.swing.plaf.SliderUI;
 
 import com.ibm.icu.impl.CalendarAstronomer.Horizon;
 
-import br.embrapa.cnpaf.classes.Period;
 import br.embrapa.cnpaf.inmetdata.dao.InmetCityDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
@@ -26,6 +25,7 @@ import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.GenericException;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
 import br.embrapa.cnpaf.inmetdata.exception.ServiceException;
+import br.embrapa.cnpaf.inmetdata.period.period;
 import br.embrapa.cnpaf.inmetdata.service.ConfigurationService;
 import br.embrapa.cnpaf.inmetdata.service.InmetService;
 import br.embrapa.cnpaf.inmetdata.service.LogService;
@@ -91,12 +91,13 @@ public class InmetData {
 	/**
 	 * Initializes system services and DAOs.
 	 * 
-	 * @return Instance of SitisEmbedded.
 	 * @throws ServiceException Error in initializing system services and DAOs.
 	 */
-	private static InmetData init() throws ServiceException {
+	private static void init() throws ServiceException {
 		try {
 			// initializing DAOs
+			InmetStateDataDAO.getInstanceOf();
+			InmetCityDataDAO.getInstanceOf();
 			InmetStationDAO.getInstanceOf();
 			InmetHourlyDataDAO.getInstanceOf();
 			InmetDiarlyDataDAO.getInstanceOf();
@@ -109,7 +110,6 @@ public class InmetData {
 			throw new ServiceException(e);
 		}
 
-		return this;
 	}
 
 	/**
@@ -175,62 +175,56 @@ public class InmetData {
 	 */
 	public static void main(String[] args) {
 		try {
-			// initializing DAOs
-			InmetStateDataDAO inmetStateDataDA = InmetStateDataDAO.getInstanceOf();
-			InmetCityDataDAO inmetCityDataDAO = InmetCityDataDAO.getInstanceOf();
-			InmetStationDAO inmetStationDAO = InmetStationDAO.getInstanceOf();
-			InmetHourlyDataDAO hourlyDataDAO = InmetHourlyDataDAO.getInstanceOf();
-			InmetDiarlyDataDAO diarlyDataDAO = InmetDiarlyDataDAO.getInstanceOf();
+			// Starting services
+			init();
 
-			// initializing services
-			TimeService.getInstanceOf();
-			InmetService.getInstanceOf();
-
-			// starting variables
-			List<InmetStationEntity> stationEntities;
+			// Getting stations and starting variables
+			List<InmetStationEntity> stationEntities = InmetStationDAO.getInstanceOf().list();
+			List<period> periods;
 			List<InmetHourlyDataEntity> hourlyData;
 			List<InmetDiarlyDataEntity> diarlyData;
-			List<Period> periods;
 			LocalDate startDate;
-			LocalDate endDate;
-			LocalDate dataCollected;
+			LocalDate endDate = TimeService.getInstanceOf().getDate().minusDays(1);
 
-			// starting
-			stationEntities = inmetStationDAO.list();
-			LocalDate yesterday = TimeService.getInstanceOf().getDate().minusDays(1);
-			stationEntities = inmetStationDAO.list();
+			for (InmetStationEntity entity : stationEntities) {
+				startDate = InmetDiarlyDataDAO.getInstanceOf().getBiggerDateByStation(entity.getId());
+				if (startDate == null) {
+					startDate = entity.getStartDate();
+				}
 
-			for (int i = 0; i < stationEntities.size(); i++) {
+				// Getting periods
+				if (!startDate.equals(endDate)) {
+					periods = TimeService.getInstanceOf().intervalos(startDate, endDate);
 
-				// Generating periods
-				periods = TimeService.getInstanceOf().intervalos(stationEntities.get(i).getStartDate(), yesterday);
+					// spanning periods
+					for (period period : periods) {
+						hourlyData = InmetService.getInstanceOf().getHourlyData(entity, period.getStart(),
+								period.getEnd());
+						if (hourlyData != null) {
 
-				for (int j = 0; j < periods.size(); j++) {
-					// Getting date
-					hourlyData = InmetService.getInstanceOf().getHourlyData(stationEntities.get(i),
-							periods.get(j).getStart(), periods.get(j).getEnd());
+							// Inserting hourly data
+							for (int i = 0; i < hourlyData.size(); i++) {
+								InmetHourlyDataDAO.getInstanceOf().save(hourlyData.get(i));
+							}
 
-					if (hourlyData != null) {
-						// Obtendo dados diarios
-						diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
-
-						// Inserindo dados horarios
-						for (int k = 0; k < hourlyData.size(); k++) {
-								hourlyDataDAO.save(hourlyData.get(k));
-						}
-						// Inserindo dados diarios
-						for (int k = 0; k < diarlyData.size(); k++) {
-								diarlyDataDAO.save(diarlyData.get(k));
+							// Inserting daily data
+							diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
+							for (int i = 0; i < diarlyData.size(); i++) {
+								InmetDiarlyDataDAO.getInstanceOf().save(diarlyData.get(i));
+							}
+						} else {
+							break;
 						}
 					}
 				}
+
 			}
 
-		} catch (GenericException e) {
+		} catch (ServiceException | PersistenceException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// Finalizing application
+		// Finalizing execution
 		System.exit(0);
 	}
 

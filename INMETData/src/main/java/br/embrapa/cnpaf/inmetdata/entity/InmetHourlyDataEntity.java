@@ -502,15 +502,15 @@ public class InmetHourlyDataEntity implements Serializable, Comparable<InmetHour
 	 */
 	public String toString() {
 		try {
-			
+
 			JsonParser parse = new JsonParser();
 			String json = JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
 			JsonObject jsonObject = (JsonObject) parse.parse(json);
 			jsonObject.remove("entilyStation");
-			jsonObject.addProperty("CD_ESTACAO",entilyStation.getCode());
-			
+			jsonObject.addProperty("CD_ESTACAO", entilyStation.getCode());
+
 			return jsonObject.toString();
-			
+
 		} catch (Throwable e) {
 		}
 		return null;

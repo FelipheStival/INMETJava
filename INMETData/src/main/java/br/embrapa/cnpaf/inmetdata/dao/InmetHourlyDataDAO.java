@@ -99,7 +99,129 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 	public static synchronized InmetHourlyDataDAO getInstanceOf() throws PersistenceException {
 		return InmetHourlyDataDAO.getInstanceOf(InmetHourlyDataDAO.class.getSimpleName(), LOG_DEFAULT_LEVEL);
 	}
+	
+	/**
+	 * this method returns a list with daily data, chosen for a period of time
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+	public List<InmetHourlyDataEntity> listByPeriodTime(LocalDate initDate, LocalDate endDate)
+			throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+		List<InmetHourlyDataEntity> data = new ArrayList<InmetHourlyDataEntity>();
 
+		String query = " SELECT * FROM public. " + TABLE_INMET_HOURLY_DATA + //
+				" WHERE measurement_date >= " + "'" + initDate + "'" + //
+				" AND " + //
+				"measurement_date <= " + "'" + endDate + "'";//
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+
+				// getting relationship
+				InmetStationEntity entity = this.getStationRelationship(resultSet.getLong("station_id"));
+
+				data.add(new InmetHourlyDataEntity( //
+						resultSet.getLong("id"), //
+						entity, //
+						resultSet.getDate("measurement_date").toLocalDate(), //
+						resultSet.getString("measure_time"), //
+						resultSet.getFloat("minimum_temperature"), //
+						resultSet.getFloat("maximum_temperature"), //
+						resultSet.getFloat("instant_temperature"), //
+						resultSet.getFloat("minimum_precipitation"), //
+						resultSet.getFloat("maximum_precipitation"), //
+						resultSet.getFloat("instant_precipitation"), //
+						resultSet.getFloat("minimum_relative_air_humidity"), //
+						resultSet.getFloat("maximum_relative_air_humidity"), //
+						resultSet.getFloat("instant_relative_air_humidity"), //
+						resultSet.getFloat("wind_speed"), //
+						resultSet.getInt("wind_direction"), //
+						resultSet.getFloat("blast"), //
+						resultSet.getFloat("global_radiation"), //
+						resultSet.getFloat("minimum_dew_point"), //
+						resultSet.getFloat("maximum_dew_point"), //
+						resultSet.getFloat("instant_dew_point"), //
+						resultSet.getFloat("instant_dew_point"))); //
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return data;
+
+	}
+
+	/**
+	 * This method returns a list of daily data for the chosen station
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+	public List<InmetHourlyDataEntity> listByStatiton(long idStation) throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+		List<InmetHourlyDataEntity> Data = new ArrayList<InmetHourlyDataEntity>();
+
+		String query = " SELECT  * FROM " + //
+				"public." + TABLE_INMET_HOURLY_DATA + //
+				" WHERE station_id = " + idStation; //
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+
+				// getting relationship
+				InmetStationEntity entity = this.getStationRelationship(resultSet.getLong("station_id"));
+
+				Data.add(new InmetHourlyDataEntity( //
+						resultSet.getLong("id"), //
+						entity, //
+						resultSet.getDate("measurement_date").toLocalDate(), //
+						resultSet.getString("measure_time"), //
+						resultSet.getFloat("minimum_temperature"), //
+						resultSet.getFloat("maximum_temperature"), //
+						resultSet.getFloat("instant_temperature"), //
+						resultSet.getFloat("minimum_precipitation"), //
+						resultSet.getFloat("maximum_precipitation"), //
+						resultSet.getFloat("instant_precipitation"), //
+						resultSet.getFloat("minimum_relative_air_humidity"), //
+						resultSet.getFloat("maximum_relative_air_humidity"), //
+						resultSet.getFloat("instant_relative_air_humidity"), //
+						resultSet.getFloat("wind_speed"), //
+						resultSet.getInt("wind_direction"), //
+						resultSet.getFloat("blast"), //
+						resultSet.getFloat("global_radiation"), //
+						resultSet.getFloat("minimum_dew_point"), //
+						resultSet.getFloat("maximum_dew_point"), //
+						resultSet.getFloat("instant_dew_point"), //
+						resultSet.getFloat("instant_dew_point"))); //
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return Data;
+	}
+	
 	@Override
 	public InmetHourlyDataDAO save(InmetHourlyDataEntity entity) throws PersistenceException {
 
@@ -260,21 +382,22 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 	}
 
 	/**
-	 * This method checks if the date and time are inserted in the bank
+	 * The method for verifying that the data is entered in the bank
 	 * 
 	 * @return Returns the instance of DAO.
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
-	public boolean checkDate(Long id_station, LocalDate date, String time) throws PersistenceException {
+	
+	public LocalDate getBiggerDateByStation(Long id_station) throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();
 		Statement statement = null;
+		LocalDate maxDate = null;
 
-		String query = "SELECT measurement_date " //
-				+ "FROM inmet_hourly_data WHERE station_id =" + id_station //
-				+ "AND  measurement_date =" + "'" + date + "'" //
-				+ " AND measure_time = " + "'" + time + "'"; //
+		String query = "SELECT max(measurement_date) " + //
+				" FROM " + TABLE_INMET_HOURLY_DATA + //
+				" WHERE station_id = " + id_station; //
 
 		try {
 			// execute sql query
@@ -284,14 +407,16 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 
 			// getting result
 			while (resultSet.next()) {
-				return true;
+				if (resultSet.getString("max") != null) {
+					maxDate = TimeUtil.stringToLocalDate(resultSet.getString("max"));
+				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return false;
+		return maxDate;
 	}
 
 	@Override

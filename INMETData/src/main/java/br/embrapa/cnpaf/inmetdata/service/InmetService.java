@@ -202,9 +202,11 @@ public class InmetService extends GenericService<InmetService> {
 	 * Transform hourly to daily data
 	 * 
 	 * @param HourlyData Daily data achieved by INMET
+	 * @return list with daily data
 	 */
 
 	public List<InmetDiarlyDataEntity> getDailyData(List<InmetHourlyDataEntity> HourlyData) {
+		
 		//Starting variables
 		InmetDiarlyDataEntity  DiarlyData = null ;
 		List<InmetDiarlyDataEntity> diarlyData = new ArrayList<InmetDiarlyDataEntity>();
@@ -236,18 +238,15 @@ public class InmetService extends GenericService<InmetService> {
 			dataFrameHourly.floatColumn(14).append(data.getRain());
 		}
 
-		//
 		Column<?> uniqueDates = dataFrameHourly.column("DT_MEDICAO").unique();
 
 		for (int i = 0; i < uniqueDates.size(); i++) {
-			//
+			
 			Table FiltredByDate = dataFrameHourly.where(dataFrameHourly.stringColumn("DT_MEDICAO")//
 					.isEqualTo(uniqueDates.getString(i)));//
 			
 			FiltredByDate = FiltredByDate.sortDescendingOn("DT_MEDICAO");
 
-			String station = FiltredByDate.getString(0, 0);
-			Long stationId = (Long) FiltredByDate.get(0, 1);
 			LocalDate date = TimeUtil.stringToLocalDate(FiltredByDate.getString(0, 2));
 
 			 DiarlyData = new InmetDiarlyDataEntity( //
@@ -258,7 +257,8 @@ public class InmetService extends GenericService<InmetService> {
 					findBigger(FiltredByDate.floatColumn(4)), //
 					findSmaller(FiltredByDate.floatColumn(5)), //
 					findBigger(FiltredByDate.floatColumn(6)), //
-					findSmaller(FiltredByDate.floatColumn(7)), findBigger(FiltredByDate.floatColumn(8)), //
+					findSmaller(FiltredByDate.floatColumn(7)),
+					findBigger(FiltredByDate.floatColumn(8)), //
 					mean(FiltredByDate.floatColumn(9)), //
 					mean(FiltredByDate.floatColumn(10)), //
 					positiveNumbers(FiltredByDate.floatColumn(11)), //
@@ -276,6 +276,7 @@ public class InmetService extends GenericService<InmetService> {
 	 * find higher column value
 	 * 
 	 * @param column dataframe column
+	 * @return returns highest column value
 	 */
 
 	private Float findBigger(FloatColumn column) {
@@ -289,6 +290,7 @@ public class InmetService extends GenericService<InmetService> {
 	 * find lower value
 	 * 
 	 * @param column dataframe column
+	 * @return returns the lowest column value
 	 */
 
 	private Float findSmaller(FloatColumn column) {
@@ -302,6 +304,7 @@ public class InmetService extends GenericService<InmetService> {
 	 * find mean
 	 * 
 	 * @param column dataframe column
+	 * @return returns highest column value
 	 */
 
 	private Float mean(FloatColumn column) {
@@ -315,6 +318,7 @@ public class InmetService extends GenericService<InmetService> {
 	 * add positive column numbers
 	 * 
 	 * @param column dataframe column
+	 * @return returns sum of positive numbers
 	 */
 
 	private Float positiveNumbers(FloatColumn column) {
@@ -329,6 +333,7 @@ public class InmetService extends GenericService<InmetService> {
 	 * add up all column values
 	 * 
 	 * @param column dataframe column
+	 * @return returns sum of all column elements
 	 */
 
 	private Float addAll(FloatColumn column) {
