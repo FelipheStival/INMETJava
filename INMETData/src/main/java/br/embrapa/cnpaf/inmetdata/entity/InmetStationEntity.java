@@ -3,8 +3,7 @@ package br.embrapa.cnpaf.inmetdata.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import br.embrapa.cnpaf.inmetdata.util.StringUtil;
-import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
+import br.embrapa.cnpaf.inmetdata.util.JsonUtil;
 
 /**
  * <br>
@@ -153,19 +152,18 @@ public class InmetStationEntity implements Serializable, Comparable<InmetStation
 
 	@Override
 	public String toString() {
-		return "InmetStationEntity [id=" + id + ", code=" + code + ", cityEntily=" + cityEntily + ", startDate="
-				+ startDate + "]";
+		String json = JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
+		return json;
 	}
 
 	@Override
 	public int compareTo(InmetStationEntity entity) {
-		// For ascending order
-		String ownEntity = StringUtil.removeAccent(this.getCode() + ";" //
-				+ TimeUtil.formatterLocalDateToYYYYMMDD(this.getStartDate()));//
-		String otherEntity = StringUtil.removeAccent(this.getCode() + ";"//
-				+ TimeUtil.formatterLocalDateToYYYYMMDD(entity.getStartDate()));//
-
-		return ownEntity.compareTo(otherEntity);
+		if (this.getId() < entity.getId()) {
+			return -1;
+		} else if (this.getId() > entity.getId()) {
+			return 1;
+		}
+		return 0;
 	}
 
 }

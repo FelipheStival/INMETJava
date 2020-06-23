@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.ParameterValueInvalidException;
 import br.embrapa.cnpaf.inmetdata.util.ErrorUtil;

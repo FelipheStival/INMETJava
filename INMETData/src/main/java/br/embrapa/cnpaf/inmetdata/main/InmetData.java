@@ -1,26 +1,17 @@
 package br.embrapa.cnpaf.inmetdata.main;
 
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import javax.naming.InitialContext;
-import javax.swing.plaf.SliderUI;
-
-import com.ibm.icu.impl.CalendarAstronomer.Horizon;
 
 import br.embrapa.cnpaf.inmetdata.dao.InmetCityDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetDiarlyDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetHourlyDataDAO;
-import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStateDataDAO;
-import br.embrapa.cnpaf.inmetdata.entity.InmetCityEntily;
+import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
-import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.GenericException;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
@@ -33,7 +24,6 @@ import br.embrapa.cnpaf.inmetdata.service.MessageService;
 import br.embrapa.cnpaf.inmetdata.service.TimeService;
 import br.embrapa.cnpaf.inmetdata.util.ErrorUtil;
 import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
-import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
 /**
  * <br>
@@ -178,54 +168,57 @@ public class InmetData {
 			// Starting services
 			init();
 
-			// Getting stations and starting variables
-			List<InmetStationEntity> stationEntities = InmetStationDAO.getInstanceOf().list();
-			List<period> periods;
+			// Starting variables
+			List<InmetStationEntity> inmetStationEntities;
 			List<InmetHourlyDataEntity> hourlyData;
 			List<InmetDiarlyDataEntity> diarlyData;
-			LocalDate startDate;
-			LocalDate endDate = TimeService.getInstanceOf().getDate().minusDays(1);
+			List<period> periods;
+			LocalDate maxDate;
+			LocalDate yesterday;
 
-			for (InmetStationEntity entity : stationEntities) {
-				startDate = InmetDiarlyDataDAO.getInstanceOf().getBiggerDateByStation(entity.getId());
-				if (startDate == null) {
-					startDate = entity.getStartDate();
-				}
+			// Getting information to start
+			inmetStationEntities = InmetStationDAO.getInstanceOf().list();
+			yesterday = TimeService.getInstanceOf().getDate().minusDays(1);
 
+			// Scrolling through stations list
+			for (InmetStationEntity entity : inmetStationEntities) {
 				// Getting periods
-				if (!startDate.equals(endDate)) {
-					periods = TimeService.getInstanceOf().intervalos(startDate, endDate);
+				maxDate = InmetDiarlyDataDAO.getInstanceOf().getBiggerDateByStation(entity.getId());
+				maxDate = (maxDate != null) ? maxDate : entity.getStartDate();
+				periods = TimeService.getInstanceOf().intervalos(maxDate, yesterday);
 
-					// spanning periods
+					// Scrolling through periods
 					for (period period : periods) {
+
+						// getting daily data
 						hourlyData = InmetService.getInstanceOf().getHourlyData(entity, period.getStart(),
 								period.getEnd());
 						if (hourlyData != null) {
+							// getting daily data
+							diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
 
-							// Inserting hourly data
+							// inserting hourly data
 							for (int i = 0; i < hourlyData.size(); i++) {
-								InmetHourlyDataDAO.getInstanceOf().save(hourlyData.get(i));
+								if(!InmetHourlyDataDAO.getInstanceOf().checkDate(hourlyData.get(i).getMeasurementDate(),hourlyData.get(i).getMeasureTime(),entity.getId())) {
+									InmetHourlyDataDAO.getInstanceOf().save(hourlyData.get(i));
+								}
 							}
 
-							// Inserting daily data
-							diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
+							// inserting daily data
 							for (int i = 0; i < diarlyData.size(); i++) {
-								InmetDiarlyDataDAO.getInstanceOf().save(diarlyData.get(i));
+								if(!InmetDiarlyDataDAO.getInstanceOf().checkDate(diarlyData.get(i).getMeasurementDate(),entity.getId())) {
+									InmetDiarlyDataDAO.getInstanceOf().save(diarlyData.get(i));
+								}
 							}
 						} else {
 							break;
 						}
 					}
 				}
-
-			}
-
-		} catch (ServiceException | PersistenceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (GenericException e) {
+			new GenericException(e);
 		}
-		// Finalizing execution
+		// ending execution
 		System.exit(0);
 	}
-
 }

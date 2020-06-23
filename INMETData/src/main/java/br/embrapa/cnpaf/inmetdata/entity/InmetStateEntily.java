@@ -2,6 +2,8 @@ package br.embrapa.cnpaf.inmetdata.entity;
 
 import java.io.Serializable;
 
+import br.embrapa.cnpaf.inmetdata.util.JsonUtil;
+
 public class InmetStateEntily implements Serializable, Comparable<InmetStateEntily> {
 
 	private static final long serialVersionUID = 1L;
@@ -55,7 +57,8 @@ public class InmetStateEntily implements Serializable, Comparable<InmetStateEnti
 
 	@Override
 	public String toString() {
-		return "stateEntily [id=" + id + ", name=" + name + "]";
+		String json = JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
+		return json;
 	}
 
 	@Override
@@ -91,7 +94,11 @@ public class InmetStateEntily implements Serializable, Comparable<InmetStateEnti
 
 	@Override
 	public int compareTo(InmetStateEntily o) {
-
+		if (this.getId() < o.getId()) {
+			return -1;
+		} else if (this.getId() > o.getId()) {
+			return 1;
+		}
 		return 0;
 	}
 

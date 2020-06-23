@@ -1,6 +1,7 @@
 package br.embrapa.cnpaf.inmetdata.entity;
 
 import java.io.Serializable;
+import br.embrapa.cnpaf.inmetdata.util.JsonUtil;
 
 public class InmetCityEntily implements Serializable, Comparable<InmetCityEntily> {
 
@@ -114,8 +115,8 @@ public class InmetCityEntily implements Serializable, Comparable<InmetCityEntily
 
 	@Override
 	public String toString() {
-		return "cityEntily [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + ", name=" + name
-				+ ", stateEntily=" + stateEntily + "]";
+		String json = JsonUtil.getJsonConverterWithExposeAnnotation().toJson(this);
+		return json;
 	}
 
 	@Override
@@ -166,7 +167,11 @@ public class InmetCityEntily implements Serializable, Comparable<InmetCityEntily
 
 	@Override
 	public int compareTo(InmetCityEntily o) {
-		// TODO Auto-generated method stub
+		if (this.getId() < o.getId()) {
+			return -1;
+		} else if (this.getId() > o.getId()) {
+			return 1;
+		}
 		return 0;
 	}
 

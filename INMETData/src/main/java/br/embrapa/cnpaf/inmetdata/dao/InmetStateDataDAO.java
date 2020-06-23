@@ -1,25 +1,16 @@
 package br.embrapa.cnpaf.inmetdata.dao;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.Query;
-import javax.swing.text.html.parser.Entity;
-
 import org.apache.log4j.Level;
-import org.checkerframework.checker.units.qual.s;
 
-import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
-import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
 import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
-import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
 /**
  * <br>
@@ -270,22 +261,6 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 		} catch (Throwable e) {
 		}
 		return this;
-	}
-
-	/**
-	 * Retrieves the module address entity associated with the moduleAddress
-	 * relationship (1-1) according to the informed identification (ID).
-	 * 
-	 * @param entityId Identification of the entity (ID) of the relationship.
-	 * @return Returns the instance of relationship entity.
-	 * @throws PersistenceException Occurrence of any problems in retrieving of the
-	 *                              relationship.
-	 */
-	private InmetStationEntity getStationRelationship(Long entityId) throws PersistenceException {
-		if (entityId != null) {
-			return InmetStationDAO.getInstanceOf().find(entityId);
-		}
-		return null;
 	}
 
 }

@@ -3,25 +3,16 @@ package br.embrapa.cnpaf.inmetdata.dao;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.Query;
-import javax.swing.text.html.parser.Entity;
-
 import org.apache.log4j.Level;
-import org.checkerframework.checker.units.qual.s;
-
-import com.sun.mail.util.QEncoderStream;
 
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
-import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
-import br.embrapa.cnpaf.inmetdata.service.TimeService;
 import br.embrapa.cnpaf.inmetdata.util.NetworkUtil;
 import br.embrapa.cnpaf.inmetdata.util.TimeUtil;
 
@@ -110,7 +101,7 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 
 		// validate entity
 		Long id = entity != null ? entity.getId() : null;
-		
+
 		// save ou update the entity
 		this.saveStationRelationship(entity.getEntilyStation());
 
@@ -209,7 +200,7 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 	/**
 	 * this method returns a list with daily data, chosen for a period of time
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return Return a list with daily data
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
@@ -264,7 +255,7 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 	/**
 	 * This method returns a list of daily data for the chosen station
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return Return a list with daily data
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
@@ -316,7 +307,7 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 	/**
 	 * The method for verifying that the data is entered in the bank
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return Returns the highest date of the selected station
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
@@ -346,8 +337,46 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return maxDate;
+	}
+
+	/**
+	 * The method for verifying that the data is entered in the bank
+	 * 
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+
+	public boolean checkDate(LocalDate dateCheck, long id_station) throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+
+		String query = "SELECT measurement_date " //
+				+ "FROM " + TABLE_INMET_DAILY_DATA //
+				+ " WHERE " //
+				+ " measurement_date = " + "'" + dateCheck + "'" //
+				+ " AND " //
+				+ "station_id = " + id_station;
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	@Override

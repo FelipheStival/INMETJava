@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.ibm.icu.text.DateFormat;
+import org.checkerframework.checker.units.qual.s;
+import org.joda.time.Period;
+
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
@@ -391,7 +393,7 @@ public class TimeService implements Runnable {
 			return false;
 		}
 	}
-	
+
 	public boolean isAfter(Date firstDate, LocalDate secondLocalDate) {
 		LocalDate firstLocalDate = this.toLocalDate(firstDate);
 		if (firstLocalDate.isAfter(secondLocalDate)) {
@@ -400,43 +402,44 @@ public class TimeService implements Runnable {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Sets the time acceleration rate to the time service.
 	 * 
 	 * @param start Start of period
-	 * @param end End of period
+	 * @param end   End of period
 	 * @return list with periods
 	 */
-	
-	public ArrayList<period> intervalos(LocalDate inicio, LocalDate fim) {
-		Calendar inicio_data = Calendar.getInstance();
-		Calendar fim_data = Calendar.getInstance();
-		SimpleDateFormat formatar = new SimpleDateFormat("yyyy-MM-dd");
-		ArrayList<period> url_estacao = new ArrayList<period>();
 
-		// Convetendo para data
+	public ArrayList<period> intervalos(LocalDate startPeriod, LocalDate endPeriod) {
+		Calendar startDate = Calendar.getInstance();
+		Calendar endDate = Calendar.getInstance();
+		SimpleDateFormat parseDate = new SimpleDateFormat("yyyy-MM-dd");
+		ArrayList<period> listPeriod = new ArrayList<period>();
+
+		// Converting objects to date
 		try {
-			inicio_data.setTime(formatar.parse(inicio.toString()));
-			fim_data.setTime(formatar.parse(fim.toString()));
+			startDate.setTime(parseDate.parse(startPeriod.toString()));
+			endDate.setTime(parseDate.parse(endPeriod.toString()));
+
+			// Building ranges
+			while (startDate.getTimeInMillis() <= endDate.getTimeInMillis()) {
+				String data_backup = parseDate.format(startDate.getTime()).toString();
+				// Adding a year
+				startDate.set(Calendar.YEAR, startDate.get(Calendar.YEAR) + 1);
+				String nova_data = parseDate.format(startDate.getTime()).toString();
+				// Checking if the date is greater than the limit
+				if (startDate.getTimeInMillis() >= endDate.getTimeInMillis()) {
+					nova_data = parseDate.format(endDate.getTime()).toString();
+				}
+				startDate.set(Calendar.DAY_OF_MONTH, startDate.get(Calendar.DAY_OF_MONTH) + 1);
+				listPeriod.add(
+						new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(nova_data)));
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		// Construindo intervalos
-		while (inicio_data.getTimeInMillis() <= fim_data.getTimeInMillis()) {
-			String data_backup = formatar.format(inicio_data.getTime()).toString();
-			// Acrecentando um ano
-			inicio_data.set(Calendar.YEAR, inicio_data.get(Calendar.YEAR) + 1);
-			String nova_data = formatar.format(inicio_data.getTime()).toString();
-			// Verificando se data e maior que o limite
-			if (inicio_data.getTimeInMillis() >= fim_data.getTimeInMillis()) {
-				nova_data = formatar.format(fim_data.getTime()).toString();
-			}
-			inicio_data.set(Calendar.DAY_OF_MONTH, inicio_data.get(Calendar.DAY_OF_MONTH) + 1);
-			// Populando arraylist
-			url_estacao.add(new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(nova_data)));
-		}
-		return url_estacao;
-	}
 
+		return listPeriod;
+	}
 }

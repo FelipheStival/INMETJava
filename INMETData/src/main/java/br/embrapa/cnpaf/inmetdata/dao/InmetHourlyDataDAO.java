@@ -7,11 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.Query;
-import javax.swing.text.html.parser.Entity;
-
 import org.apache.log4j.Level;
-import org.checkerframework.checker.units.qual.s;
 
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
@@ -99,11 +95,11 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 	public static synchronized InmetHourlyDataDAO getInstanceOf() throws PersistenceException {
 		return InmetHourlyDataDAO.getInstanceOf(InmetHourlyDataDAO.class.getSimpleName(), LOG_DEFAULT_LEVEL);
 	}
-	
+
 	/**
 	 * this method returns a list with daily data, chosen for a period of time
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return Return a list with daily data
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
@@ -166,11 +162,11 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 	/**
 	 * This method returns a list of daily data for the chosen station
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return Return a list with daily data
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
-	public List<InmetHourlyDataEntity> listByStatiton(long idStation) throws PersistenceException {
+	public List<InmetHourlyDataEntity> listByStation(long idStation) throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();
 		Statement statement = null;
@@ -221,7 +217,7 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 
 		return Data;
 	}
-	
+
 	@Override
 	public InmetHourlyDataDAO save(InmetHourlyDataEntity entity) throws PersistenceException {
 
@@ -382,13 +378,13 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 	}
 
 	/**
-	 * The method for verifying that the data is entered in the bank
+	 * This method returns the highest date registered at the bank
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return Returns largest bank date
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
-	
+
 	public LocalDate getBiggerDateByStation(Long id_station) throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();
@@ -417,6 +413,49 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 		}
 
 		return maxDate;
+	}
+
+	/**
+	 * This method checks if the data is already inserted in the bank
+	 * 
+	 * @return Returns boolean truth if date already exists in the bank and false otherwise
+	 * @param dateCheck date to be checked at the bank
+	 * @param measureTime time to be checked at the bank
+	 * @param station id to be checked at the bank
+	 * @throws PersistenceException Occurrence of any problems in creating of the
+	 *                              DAO.
+	 */
+
+	public boolean checkDate(LocalDate dateCheck,String measureTime,long id_station) throws PersistenceException {
+		// initializing variables
+		Connection connection = this.getConnection();
+		Statement statement = null;
+
+		String query = "SELECT measurement_date " //
+				+ "FROM " + TABLE_INMET_HOURLY_DATA //
+				+ " WHERE " //
+				+ " measurement_date = " + "'" + dateCheck + "'" //
+				+ " AND " //
+				+ "station_id = " + id_station
+				+" AND "
+				+ "measure_time =" + "'" + measureTime + "'";
+
+		try {
+			// execute sql query
+			statement = connection.createStatement();
+			statement.execute(query);
+			ResultSet resultSet = statement.getResultSet();
+
+			// getting result
+			while (resultSet.next()) {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 
 	@Override
