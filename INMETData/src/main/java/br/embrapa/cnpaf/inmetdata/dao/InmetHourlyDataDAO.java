@@ -378,13 +378,13 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 	}
 
 	/**
-	 * This method returns the highest date registered at the bank
+	 * this method returns the highest date in the bank
 	 * 
-	 * @return Returns largest bank date
+	 * @return Returns the highest date of the selected station
+	 * @param id_station Station ID
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
-
 	public LocalDate getBiggerDateByStation(Long id_station) throws PersistenceException {
 		// initializing variables
 		Connection connection = this.getConnection();

@@ -262,5 +262,20 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 		}
 		return this;
 	}
-
+	
+	/**
+	 * Retrieves the module address entity associated with the moduleAddress
+	 * relationship (1-1) according to the informed identification (ID).
+	 * 
+	 * @param entityId Identification of the entity (ID) of the relationship.
+	 * @return Returns the instance of relationship entity.
+	 * @throws PersistenceException Occurrence of any problems in retrieving of the
+	 *                              relationship.
+	 */
+	private InmetStationEntity getStationRelationship(Long entityId) throws PersistenceException {
+		if (entityId != null) {
+			return InmetStationDAO.getInstanceOf().find(entityId);
+		}
+		return null;
+	}
 }

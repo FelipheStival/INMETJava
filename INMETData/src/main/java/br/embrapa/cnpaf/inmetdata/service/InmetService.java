@@ -58,7 +58,7 @@ public class InmetService extends GenericService<InmetService> {
 	public static final String INMET_WEB_SERVICE_URL = "https://apitempo.inmet.gov.br/estacao";
 
 	public static final int REQUEST_ATTEMPTS = 6;
-	public static final int RANDOMIZE_TIME_BETWEEN_ATTEMPTS = 100;
+	public static final int RANDOMIZE_TIME_BETWEEN_ATTEMPTS = 20;
 	public static final int MINIMUM_TIME_BETWEEN_ATTEMPTS = 20;
 
 	private static InmetService instance;

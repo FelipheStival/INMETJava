@@ -433,8 +433,7 @@ public class TimeService implements Runnable {
 					nova_data = parseDate.format(endDate.getTime()).toString();
 				}
 				startDate.set(Calendar.DAY_OF_MONTH, startDate.get(Calendar.DAY_OF_MONTH) + 1);
-				listPeriod.add(
-						new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(nova_data)));
+				listPeriod.add(new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(nova_data)));
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();

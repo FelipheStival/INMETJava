@@ -237,7 +237,8 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 						resultSet.getFloat("minimum_precipitation"), //
 						resultSet.getFloat("maximum_precipitation"), //
 						resultSet.getFloat("minimum_relative_air_humidity"), //
-						resultSet.getFloat("maximum_relative_air_humidity"), resultSet.getFloat("wind_speed"), //
+						resultSet.getFloat("maximum_relative_air_humidity"), //
+						resultSet.getFloat("wind_speed"), //
 						resultSet.getFloat("wind_direction"), //
 						resultSet.getFloat("global_radiation"), //
 						resultSet.getFloat("minimum_dew_point"), //
@@ -305,9 +306,10 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 	}
 
 	/**
-	 * The method for verifying that the data is entered in the bank
+	 * this method returns the highest date in the bank
 	 * 
 	 * @return Returns the highest date of the selected station
+	 * @param id_station Station ID
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */
@@ -344,7 +346,9 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 	/**
 	 * The method for verifying that the data is entered in the bank
 	 * 
-	 * @return Returns the instance of DAO.
+	 * @return returns true Boolean if date exists
+	 * @param dateCheck  date to be checked at the bank
+	 * @param id_station station id
 	 * @throws PersistenceException Occurrence of any problems in creating of the
 	 *                              DAO.
 	 */

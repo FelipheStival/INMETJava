@@ -199,14 +199,14 @@ public class InmetData {
 
 							// inserting hourly data
 							for (int i = 0; i < hourlyData.size(); i++) {
-								if(!InmetHourlyDataDAO.getInstanceOf().checkDate(hourlyData.get(i).getMeasurementDate(),hourlyData.get(i).getMeasureTime(),entity.getId())) {
+								if(hourlyData.get(i).getMeasurementDate().isAfter(maxDate)) {
 									InmetHourlyDataDAO.getInstanceOf().save(hourlyData.get(i));
 								}
 							}
 
 							// inserting daily data
 							for (int i = 0; i < diarlyData.size(); i++) {
-								if(!InmetDiarlyDataDAO.getInstanceOf().checkDate(diarlyData.get(i).getMeasurementDate(),entity.getId())) {
+								if(diarlyData.get(i).getMeasurementDate().isAfter(maxDate)) {
 									InmetDiarlyDataDAO.getInstanceOf().save(diarlyData.get(i));
 								}
 							}
