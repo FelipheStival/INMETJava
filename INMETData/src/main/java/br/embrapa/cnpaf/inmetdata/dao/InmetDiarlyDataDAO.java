@@ -343,46 +343,6 @@ public class InmetDiarlyDataDAO extends GenericDAO<InmetDiarlyDataDAO, InmetDiar
 		return maxDate;
 	}
 
-	/**
-	 * The method for verifying that the data is entered in the bank
-	 * 
-	 * @return returns true Boolean if date exists
-	 * @param dateCheck  date to be checked at the bank
-	 * @param id_station station id
-	 * @throws PersistenceException Occurrence of any problems in creating of the
-	 *                              DAO.
-	 */
-
-	public boolean checkDate(LocalDate dateCheck, long id_station) throws PersistenceException {
-		// initializing variables
-		Connection connection = this.getConnection();
-		Statement statement = null;
-
-		String query = "SELECT measurement_date " //
-				+ "FROM " + TABLE_INMET_DAILY_DATA //
-				+ " WHERE " //
-				+ " measurement_date = " + "'" + dateCheck + "'" //
-				+ " AND " //
-				+ "station_id = " + id_station;
-
-		try {
-			// execute sql query
-			statement = connection.createStatement();
-			statement.execute(query);
-			ResultSet resultSet = statement.getResultSet();
-
-			// getting result
-			while (resultSet.next()) {
-				return true;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
 	@Override
 	protected InmetDiarlyDataDAO init() throws PersistenceException {
 

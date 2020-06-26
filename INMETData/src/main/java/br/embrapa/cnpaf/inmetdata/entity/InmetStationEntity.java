@@ -1,5 +1,6 @@
 package br.embrapa.cnpaf.inmetdata.entity;
 
+import java.awt.List;
 import java.io.Serializable;
 import java.time.LocalDate;
 

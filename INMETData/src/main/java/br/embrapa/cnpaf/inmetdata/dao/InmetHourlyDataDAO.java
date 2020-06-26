@@ -415,49 +415,6 @@ public class InmetHourlyDataDAO extends GenericDAO<InmetHourlyDataDAO, InmetHour
 		return maxDate;
 	}
 
-	/**
-	 * This method checks if the data is already inserted in the bank
-	 * 
-	 * @return Returns boolean truth if date already exists in the bank and false otherwise
-	 * @param dateCheck date to be checked at the bank
-	 * @param measureTime time to be checked at the bank
-	 * @param station id to be checked at the bank
-	 * @throws PersistenceException Occurrence of any problems in creating of the
-	 *                              DAO.
-	 */
-
-	public boolean checkDate(LocalDate dateCheck,String measureTime,long id_station) throws PersistenceException {
-		// initializing variables
-		Connection connection = this.getConnection();
-		Statement statement = null;
-
-		String query = "SELECT measurement_date " //
-				+ "FROM " + TABLE_INMET_HOURLY_DATA //
-				+ " WHERE " //
-				+ " measurement_date = " + "'" + dateCheck + "'" //
-				+ " AND " //
-				+ "station_id = " + id_station
-				+" AND "
-				+ "measure_time =" + "'" + measureTime + "'";
-
-		try {
-			// execute sql query
-			statement = connection.createStatement();
-			statement.execute(query);
-			ResultSet resultSet = statement.getResultSet();
-
-			// getting result
-			while (resultSet.next()) {
-				return true;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
 	@Override
 	protected InmetHourlyDataEntity getEntity(ResultSet queryResult) throws PersistenceException {
 

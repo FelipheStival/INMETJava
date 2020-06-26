@@ -187,38 +187,37 @@ public class InmetData {
 				maxDate = (maxDate != null) ? maxDate : entity.getStartDate();
 				periods = TimeService.getInstanceOf().intervalos(maxDate, yesterday);
 
-					// Scrolling through periods
-					for (period period : periods) {
+				// Scrolling through periods
+				for (period period : periods) {
 
+					// getting daily data
+					hourlyData = InmetService.getInstanceOf().getHourlyData(entity, period.getStart(), period.getEnd());
+					if (hourlyData != null) {
 						// getting daily data
-						hourlyData = InmetService.getInstanceOf().getHourlyData(entity, period.getStart(),
-								period.getEnd());
-						if (hourlyData != null) {
-							// getting daily data
-							diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
+						diarlyData = InmetService.getInstanceOf().getDailyData(hourlyData);
 
-							// inserting hourly data
-							for (int i = 0; i < hourlyData.size(); i++) {
-								if(hourlyData.get(i).getMeasurementDate().isAfter(maxDate)) {
-									InmetHourlyDataDAO.getInstanceOf().save(hourlyData.get(i));
-								}
+						// inserting hourly data
+						for (int i = 0; i < hourlyData.size(); i++) {
+							if (hourlyData.get(i).getMeasurementDate().isAfter(maxDate)) {
+								InmetHourlyDataDAO.getInstanceOf().save(hourlyData.get(i));
 							}
-
-							// inserting daily data
-							for (int i = 0; i < diarlyData.size(); i++) {
-								if(diarlyData.get(i).getMeasurementDate().isAfter(maxDate)) {
-									InmetDiarlyDataDAO.getInstanceOf().save(diarlyData.get(i));
-								}
-							}
-						} else {
-							break;
 						}
+
+						// inserting daily data
+						for (int i = 0; i < diarlyData.size(); i++) {
+							if (diarlyData.get(i).getMeasurementDate().isAfter(maxDate)) {
+								InmetDiarlyDataDAO.getInstanceOf().save(diarlyData.get(i));
+							}
+						}
+					} else {
+						break;
 					}
 				}
+			}
 		} catch (GenericException e) {
 			new GenericException(e);
 		}
-		// ending execution
+		//ending execution
 		System.exit(0);
 	}
 }
