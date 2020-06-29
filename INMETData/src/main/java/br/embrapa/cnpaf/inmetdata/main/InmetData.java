@@ -1,7 +1,6 @@
 package br.embrapa.cnpaf.inmetdata.main;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 import br.embrapa.cnpaf.inmetdata.dao.InmetCityDataDAO;
@@ -217,7 +216,7 @@ public class InmetData {
 		} catch (GenericException e) {
 			new GenericException(e);
 		}
-		//ending execution
+		// ending execution
 		System.exit(0);
 	}
 }

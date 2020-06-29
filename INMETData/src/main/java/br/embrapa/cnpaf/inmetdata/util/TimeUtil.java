@@ -396,40 +396,4 @@ public class TimeUtil {
 		);
 		return (!duration.isEmpty() ? " (" + duration + ") " : "");
 	}
-
-	/**
-	 * Return a list with periods of data
-	 * 
-	 * @param start of data period.
-	 * @param end   of data period.
-	 */
-	public static ArrayList<String> intervalos(LocalDate inicio,LocalDate fim) {
-		Calendar inicio_data = Calendar.getInstance();
-		Calendar fim_data = Calendar.getInstance();
-		SimpleDateFormat formatar = new SimpleDateFormat("yyyy-MM-dd");
-		ArrayList<String> url_estacao = new ArrayList<String>();
-		// Convetendo para data
-		try {
-			inicio_data.setTime(formatar.parse(inicio.toString()));
-			fim_data.setTime(formatar.parse(fim.toString()));
-			// Construindo intervalos
-			while (inicio_data.getTimeInMillis() <= fim_data.getTimeInMillis()) {
-				String data_backup = formatar.format(inicio_data.getTime()).toString();
-				// Acrecentando um ano
-				inicio_data.set(Calendar.YEAR, inicio_data.get(Calendar.YEAR) + 1);
-				String nova_data = formatar.format(inicio_data.getTime()).toString();
-				// Verificando se data e maior que o limite
-				if (inicio_data.getTimeInMillis() >= fim_data.getTimeInMillis()) {
-					nova_data = formatar.format(fim_data.getTime()).toString();
-				}
-				inicio_data.set(Calendar.DAY_OF_MONTH, inicio_data.get(Calendar.DAY_OF_MONTH) + 1);
-				// Populando arraylist
-				url_estacao.add(data_backup + "/" + nova_data);
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		return url_estacao;
-	}
 }
