@@ -102,13 +102,10 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 		id = super.save(//
 				id //
 				,
-				"INSERT INTO public." + TABLE_INMET_STATE + "(" +
-						"name" + ")" +
-						" VALUES " +
-						"(" + "'" +  entity.getName() + "'" + ");"
-				, "UPDATE public." + TABLE_INMET_STATE +  " SET " +
-				  "name=" + "'" + entity.getName() + "'" +
-				  " WHERE id=" +  entity.getId());
+				"INSERT INTO public." + TABLE_INMET_STATE + "(" + "name" + ")" + " VALUES " + "(" + "'"
+						+ entity.getName() + "'" + ");",
+				"UPDATE public." + TABLE_INMET_STATE + " SET " + "name=" + "'" + entity.getName() + "'" + " WHERE id="
+						+ entity.getId());
 
 		// return DAO instance
 		return this;
@@ -170,10 +167,21 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 		// initializing table
 		super.init(queries);
 
-		// Iniciando populacao
+		return this;
+	}
+	
+	/**
+	 *This method inserts the records if the table is empty
+	 * 
+	 * @throws PersistenceException Occurrence of any problems in retrieving of the
+	 *                              relationship.
+	 */
+	public void startRecords() throws PersistenceException {
+
 		List<InmetStateEntily> stateEntilies = this.list();
+		List<String> queries = new ArrayList<String>();
+
 		if (stateEntilies.size() == 0) {
-			queries.clear();
 			queries.add("INSERT INTO " + TABLE_INMET_STATE + "(name)" + //
 					"VALUES " + //
 					"('GO'),\r\n" + //
@@ -202,12 +210,10 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 					" ('RJ'),\r\n" + //
 					" ('RS'),\r\n" + //
 					" ('SC')\r\n" + //
-					""); //
+					"");
 
 			this.init(queries);
-
 		}
-		return this;
 	}
 
 	@Override
@@ -219,10 +225,9 @@ public class InmetStateDataDAO extends GenericDAO<InmetStateDataDAO, InmetStateE
 			id = queryResult.getObject("id") != null ? queryResult.getLong("id") : null;
 
 			// creating new entity with attributes retrieved from database
-			return new InmetStateEntily(
-					id, //
+			return new InmetStateEntily(id, //
 					queryResult.getString("name") //
-					);
+			);
 
 		} catch (Throwable e) {
 			throw this.error(NetworkUtil.getLocalIpAddress(), MessageEnum.GENERIC_DAO_ERROR_GET_ENTITY,

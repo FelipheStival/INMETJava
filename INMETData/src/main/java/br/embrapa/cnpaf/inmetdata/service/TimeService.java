@@ -427,13 +427,13 @@ public class TimeService implements Runnable {
 				String data_backup = parseDate.format(startDate.getTime()).toString();
 				// Adding a year
 				startDate.set(Calendar.YEAR, startDate.get(Calendar.YEAR) + 1);
-				String nova_data = parseDate.format(startDate.getTime()).toString();
+				String backup = parseDate.format(startDate.getTime()).toString();
 				// Checking if the date is greater than the limit
 				if (startDate.getTimeInMillis() >= endDate.getTimeInMillis()) {
-					nova_data = parseDate.format(endDate.getTime()).toString();
+					backup = parseDate.format(endDate.getTime()).toString();
 				}
 				startDate.set(Calendar.DAY_OF_MONTH, startDate.get(Calendar.DAY_OF_MONTH) + 1);
-				listPeriod.add(new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(nova_data)));
+				listPeriod.add(new period(TimeUtil.stringToLocalDate(data_backup), TimeUtil.stringToLocalDate(backup)));
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();

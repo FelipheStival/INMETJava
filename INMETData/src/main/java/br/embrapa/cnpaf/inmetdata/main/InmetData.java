@@ -10,6 +10,7 @@ import br.embrapa.cnpaf.inmetdata.dao.InmetStateDataDAO;
 import br.embrapa.cnpaf.inmetdata.dao.InmetStationDAO;
 import br.embrapa.cnpaf.inmetdata.entity.InmetDiarlyDataEntity;
 import br.embrapa.cnpaf.inmetdata.entity.InmetHourlyDataEntity;
+import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.GenericException;
@@ -174,6 +175,11 @@ public class InmetData {
 			List<period> periods;
 			LocalDate maxDate;
 			LocalDate yesterday;
+			
+			//populando tabela
+			InmetStateDataDAO.getInstanceOf().startRecords();
+			InmetCityDataDAO.getInstanceOf().startRecords();
+			InmetStationDAO.getInstanceOf().startRecords();
 
 			// Getting information to start
 			inmetStationEntities = InmetStationDAO.getInstanceOf().list();

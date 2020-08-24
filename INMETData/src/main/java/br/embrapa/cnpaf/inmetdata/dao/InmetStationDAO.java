@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Level;
 
 import br.embrapa.cnpaf.inmetdata.entity.InmetCityEntily;
+import br.embrapa.cnpaf.inmetdata.entity.InmetStateEntily;
 import br.embrapa.cnpaf.inmetdata.entity.InmetStationEntity;
 import br.embrapa.cnpaf.inmetdata.enumerate.MessageEnum;
 import br.embrapa.cnpaf.inmetdata.exception.PersistenceException;
@@ -180,11 +181,97 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 		);
 
 		super.init(queries);
+		
+		return this;
+	}
 
-		List<InmetStationEntity> entities = this.list();
+	@Override
+	protected InmetStationEntity getEntity(ResultSet queryResult) throws PersistenceException {
 
-		if (entities.size() == 0) {
-			queries.clear();
+		Long id = null;
+		try {
+			// retrieving the attributes
+			id = queryResult.getObject("id") != null ? queryResult.getLong("id") : null;
+
+			// Recovering relationship
+			Long idCity = queryResult.getLong("id_city");
+			InmetCityEntily cityEntily = this.getCityRelationship(idCity);
+
+			// creating new entity with attributes retrieved from database
+			return new InmetStationEntity( //
+					queryResult.getLong("id"), //
+					queryResult.getString("code"), //
+					cityEntily, //
+					TimeUtil.stringToLocalDate(queryResult.getString("start_date"))//
+			); //
+
+		} catch (Throwable e) {
+			throw this.error(NetworkUtil.getLocalIpAddress(), MessageEnum.GENERIC_DAO_ERROR_GET_ENTITY,
+					this.getClass().getSimpleName(), "getEntity", e.getMessage(), null, true,
+					NetworkUtil.getLocalIpAddress(), this.getDAODescriptor(), String.valueOf(id));
+		}
+	}
+
+	/**
+	 * Saves the module address entity associated with the moduleAddress
+	 * relationship (1-1).
+	 * 
+	 * @param entity Relationship entity to be saved.
+	 * @return Returns the instance of DAO.
+	 * @throws PersistenceException Occurrence of any problems in saving of the
+	 *                              relationship.
+	 */
+	private InmetStationDAO saveStationRelationship(InmetCityEntily entity) throws PersistenceException {
+		if (entity != null) {
+			InmetCityDataDAO.getInstanceOf().save(entity);
+		}
+		return this;
+	}
+
+	/**
+	 * Removes the module address entity associated with the moduleAddress
+	 * relationship (1-1) according to the informed identification (ID).
+	 * 
+	 * @param entityId Identifier (ID) of the entity associated with the
+	 *                 moduleAddress relationship.
+	 * @return Returns the instance of DAO.
+	 */
+	private InmetStationDAO removeCityRelationship(Long entityId) {
+		try {
+			InmetCityDataDAO.getInstanceOf().remove(entityId);
+		} catch (Throwable e) {
+		}
+		return this;
+	}
+
+	/**
+	 * Retrieves the module address entity associated with the moduleAddress
+	 * relationship (1-1) according to the informed identification (ID).
+	 * 
+	 * @param entityId Identification of the entity (ID) of the relationship.
+	 * @return Returns the instance of relationship entity.
+	 * @throws PersistenceException Occurrence of any problems in retrieving of the
+	 *                              relationship.
+	 */
+	private InmetCityEntily getCityRelationship(Long entityId) throws PersistenceException {
+		if (entityId != null) {
+			return InmetCityDataDAO.getInstanceOf().find(entityId);
+		}
+		return null;
+	}
+	
+	/**
+	 *This method inserts the records if the table is empty
+	 * 
+	 * @throws PersistenceException Occurrence of any problems in retrieving of the
+	 *                              relationship.
+	 */
+	public void startRecords() throws PersistenceException {
+
+		List<InmetStationEntity> stateEntilies = this.list();
+		List<String> queries = new ArrayList<String>();
+
+		if (stateEntilies.size() == 0) {
 			queries.add("INSERT INTO station(id_city,code,start_date) " //
 					+ "VALUES " //
 					+ "(298,'A422','2008-07-20'),"  //
@@ -769,88 +856,11 @@ public class InmetStationDAO extends GenericDAO<InmetStationDAO, InmetStationEnt
 					+ "(582,'A858','2008-03-14'),"  //
 					+ "(120,'A247','2016-09-10'),"  //
 					+ "(137,'A255','2019-09-17')" //
-
-
+					
 			);
 
-			super.init(queries);
+			this.init(queries);
 		}
-		return this;
-	}
-
-	@Override
-	protected InmetStationEntity getEntity(ResultSet queryResult) throws PersistenceException {
-
-		Long id = null;
-		try {
-			// retrieving the attributes
-			id = queryResult.getObject("id") != null ? queryResult.getLong("id") : null;
-
-			// Recovering relationship
-			Long idCity = queryResult.getLong("id_city");
-			InmetCityEntily cityEntily = this.getCityRelationship(idCity);
-
-			// creating new entity with attributes retrieved from database
-			return new InmetStationEntity( //
-					queryResult.getLong("id"), //
-					queryResult.getString("code"), //
-					cityEntily, //
-					TimeUtil.stringToLocalDate(queryResult.getString("start_date"))//
-			); //
-
-		} catch (Throwable e) {
-			throw this.error(NetworkUtil.getLocalIpAddress(), MessageEnum.GENERIC_DAO_ERROR_GET_ENTITY,
-					this.getClass().getSimpleName(), "getEntity", e.getMessage(), null, true,
-					NetworkUtil.getLocalIpAddress(), this.getDAODescriptor(), String.valueOf(id));
-		}
-	}
-
-	/**
-	 * Saves the module address entity associated with the moduleAddress
-	 * relationship (1-1).
-	 * 
-	 * @param entity Relationship entity to be saved.
-	 * @return Returns the instance of DAO.
-	 * @throws PersistenceException Occurrence of any problems in saving of the
-	 *                              relationship.
-	 */
-	private InmetStationDAO saveStationRelationship(InmetCityEntily entity) throws PersistenceException {
-		if (entity != null) {
-			InmetCityDataDAO.getInstanceOf().save(entity);
-		}
-		return this;
-	}
-
-	/**
-	 * Removes the module address entity associated with the moduleAddress
-	 * relationship (1-1) according to the informed identification (ID).
-	 * 
-	 * @param entityId Identifier (ID) of the entity associated with the
-	 *                 moduleAddress relationship.
-	 * @return Returns the instance of DAO.
-	 */
-	private InmetStationDAO removeCityRelationship(Long entityId) {
-		try {
-			InmetCityDataDAO.getInstanceOf().remove(entityId);
-		} catch (Throwable e) {
-		}
-		return this;
-	}
-
-	/**
-	 * Retrieves the module address entity associated with the moduleAddress
-	 * relationship (1-1) according to the informed identification (ID).
-	 * 
-	 * @param entityId Identification of the entity (ID) of the relationship.
-	 * @return Returns the instance of relationship entity.
-	 * @throws PersistenceException Occurrence of any problems in retrieving of the
-	 *                              relationship.
-	 */
-	private InmetCityEntily getCityRelationship(Long entityId) throws PersistenceException {
-		if (entityId != null) {
-			return InmetCityDataDAO.getInstanceOf().find(entityId);
-		}
-		return null;
 	}
 
 }
